@@ -1,6 +1,12 @@
 # docker-nginx-akeneo
 Akeneo PIM docker using Nginx
 
+## Overview
+This is a simple Akeneo PIM Docker image running PHP7, Nginx with PHP-FPM.
+
+This borrows largely from two worlds [Akeneo PIM](https://docs.akeneo.com/1.6/developer_guide/installation/system_requirements/system_install_ubuntu_1604.html) and [nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm). Pull requests are encouraged.
+
+
 ## Running Image as stand-alone
 First create an image tag
 ```BASH
@@ -36,7 +42,7 @@ chmod u+x run.sh
  ```BASH
  run.sh /path/to/akeneo/pim/repo
  ```
-That's it. Don't forget to modify your `run.sh` with relevant values.
+That's it. Don't forget to **modify** your `run.sh` with relevant values.
 
 
 ### Known Issues
