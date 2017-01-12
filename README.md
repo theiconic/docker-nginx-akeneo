@@ -26,7 +26,7 @@ exec docker run --detach    \\
     -v "\${SOURCE_FOLDER}:/var/www/pim/"       \\
     -v "\${PWD}/scripts:/var/www/html/scripts" \\
     -v "\${PWD}/conf:/var/www/html/conf"       \\
-    -e "PIM_WEB_PROCESS_USER=$(id -u)"         \\
+    -e "PIM_WEB_PROCESS_USER=\$(id -u)"         \\
     -e "PHP_MEM_LIMIT=512"	\\
     -e "RUN_SCRIPTS=1" 		\\
     -e "PIM_DB_HOST=~~~" 	\\
