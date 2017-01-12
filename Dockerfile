@@ -8,7 +8,7 @@ RUN  sed -i -e 's/dl-cdn/dl-4/' /etc/apk/repositories && \
 	autoconf \
 	automake \
 	build-base \
-	py-pexpect\
+	py-pexpect \
 	gosu@testing \
 	php7-dev \
 	php7-xml \
