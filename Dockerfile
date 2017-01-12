@@ -1,13 +1,15 @@
 
 FROM richarvey/nginx-php-fpm:php7
 # Maintainer
-MAINTAINER Yinka Asonibare
+MAINTAINER Yinka Asonibare <yinka.asonibare@theiconic.com.au>
 
 RUN  sed -i -e 's/dl-cdn/dl-4/' /etc/apk/repositories && \
 	apk --update --no-cache add \
 	autoconf \
 	automake \
 	build-base \
+	py-pexpect \
+	gosu@testing \
 	php7-dev \
 	php7-xml \
 	php7-xmlreader \
@@ -58,6 +60,3 @@ ADD build/scripts/start.sh /start.sh
 
 # Ensure it's executable
 RUN chmod gu+x /start.sh
-
-# Check that we can install doctrine/mongodb-odm-bundle
-# RUN if [ $(composer require "doctrine/mongodb-odm-bundle" "3.2.0" > /dev/null 2>&1; echo $?) -ne 0 ]; then  echo "bad"; fi

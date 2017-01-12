@@ -21,10 +21,12 @@ Then create a simple run file to encapsulate all options:
 cat > run.sh <<-EOF
 SOURCE_FOLDER=$1
 # Run the image
-exec docker run -it --rm 					   \\
-    -v "\${SOURCE_FOLDER}:/var/www/pim/" 	   \\
+exec docker run --detach    \\
+    --name akeneo_pim       \\
+    -v "\${SOURCE_FOLDER}:/var/www/pim/"       \\
     -v "\${PWD}/scripts:/var/www/html/scripts" \\
-    -v "\${PWD}/conf:/var/www/html/conf" 	   \\
+    -v "\${PWD}/conf:/var/www/html/conf"       \\
+    -e "PIM_WEB_PROCESS_USER=$(id -u)"         \\
     -e "PHP_MEM_LIMIT=512"	\\
     -e "RUN_SCRIPTS=1" 		\\
     -e "PIM_DB_HOST=~~~" 	\\
@@ -35,6 +37,11 @@ exec docker run -it --rm 					   \\
     -e "PIM_PROVISION=1" 	\\
      theiconic/docker-nginx-akeneo
 EOF
+
+#### Setting environment variable
+***PIM_PROVISION=1*** is only necessasry for the first run. For subsequent run, this could be removed.
+***PIM_WEB_PROCESS_USER*** is the ID for the repo user, or user running the `docker run`. Provisioning will fail if user id `alpine` is mapped to invalid ID. Defaults to 1000.
+***RUN_SCRIPTS*** should always be set to 1. Hopefully in future iterations this will be on by default.
 
 chmod u+x run.sh
 ```
