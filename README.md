@@ -26,7 +26,7 @@ exec docker run --detach    \\
     -v "\${SOURCE_FOLDER}:/var/www/pim/"       \\
     -v "\${PWD}/scripts:/var/www/html/scripts" \\
     -v "\${PWD}/conf:/var/www/html/conf"       \\
-    -e "PIM_WEB_PROCESS_USER=$(id -u)"         \\
+    -e "PIM_WEB_PROCESS_USER=\$(id -u)"         \\
     -e "PHP_MEM_LIMIT=512"	\\
     -e "RUN_SCRIPTS=1" 		\\
     -e "PIM_DB_HOST=~~~" 	\\
@@ -45,6 +45,15 @@ EOF
 
 chmod u+x run.sh
 ```
+
+
+#### Setting environment variable
+***PIM_PROVISION=1*** is only necessasry for the first run. For subsequent run, this could be removed.
+***PIM_WEB_PROCESS_USER*** is the ID for the repo user, or user running the `docker run`. Provisioning will fail if user id `alpine` is mapped to invalid ID. Defaults to 1000.
+***RUN_SCRIPTS*** should always be set to 1. Hopefully in future iterations this will be on by default.
+
+
+
  Now you can sit back and run this:
  ```BASH
  run.sh /path/to/akeneo/pim/repo
