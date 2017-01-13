@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+    # MySQL Server
+    mysql:
+        image: mysql:5.6
+        restart: always
+        container_name: "akeneo_pim_mysql"
+        environment:
+          - MYSQL_ROOT_PASSWORD=l0r3m
+        command: "--max_allowed_packet=1000M --connect_timeout=72"
+        labels:
+            - com.pim.alias.mysql
+        volumes:
+            - "./.mysql_data/mysql:/var/lib/mysql"
+            - "./conf/mysql/:/etc/mysql/conf.d"
+        networks:
+            akeneo_network:
+                aliases:
+                    - mysql.db
+
+
+    # Akeneo Pim
+    akeneo:
+        build: .
+        image: pim/docker-akeneo-apline
+        container_name: "akeneo_pim_app"
+        environment:
+            - "WEBROOT=/var/www/pim"
+        volumes:
+            - "${SOURCE_PATH}:/var/www/pim/"
+            - "./scripts:/var/www/html/scripts"
+            - "./conf:/var/www/html/conf"
+        labels:
+            - com.pim.alias.web_app
+        networks:
+            akeneo_network:
+                aliases:
+                    - akeneo.pim
+# volumes:
+    
+networks:
+    akeneo_network:
+        
