@@ -44,6 +44,11 @@ print_msg "====== Bringing empty service ..."
 	docker-compose up -d || exit 22
 	# Store the working directory
 	sed -i "s|WORKING_DIR=|WORKING_DIR=$(realpath ${SOURCE_PATH})|g" ./.env
+
+	WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
+    print_msg "\nWeb service listening at http://${WEB_APP_IP}/"
+    print_msg "For convience, you could add ${WEB_APP_IP} to /etc/hosts."
+    print_msg "eg. echo '${WEB_APP_IP}	akeneo.pim' >> /etc/hosts\n"
 print_msg "Done"
 
 # Provision the system

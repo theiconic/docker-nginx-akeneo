@@ -6,6 +6,24 @@ This is a simple Akeneo PIM Docker image running PHP7, Nginx with PHP-FPM.
 
 This borrows largely from two worlds [Akeneo PIM](https://docs.akeneo.com/1.6/developer_guide/installation/system_requirements/system_install_ubuntu_1604.html) and [nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm). Pull requests are encouraged.
 
+## Running Service Clusters
+It's easy as:
+1. Clone this repository
+```BASH
+git clone https://github.com/theiconic/docker-nginx-akeneo.git
+cd docker-nginx-akeneo
+```
+2. Then provision the systems. Now, this could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
+```
+$ > ./install.sh
+```
+3. Subsequent runs cab be done just by running:
+```
+$ > ./run.sh
+```
+
+***That's it!*** Remember to add the IP to your `/etc/hosts` for convinience.
+
 
 ## Running Image as stand-alone
 First create an image tag
@@ -27,14 +45,14 @@ exec docker run --detach    \\
     -v "\${PWD}/scripts:/var/www/html/scripts" \\
     -v "\${PWD}/conf:/var/www/html/conf"       \\
     -e "PIM_WEB_PROCESS_USER=\$(id -u)"         \\
-    -e "PHP_MEM_LIMIT=512"	\\
-    -e "RUN_SCRIPTS=1" 		\\
-    -e "PIM_DB_HOST=~~~" 	\\
-    -e "PIM_DB_PORT=3306" 	\\
-    -e "PIM_DB_NAME=~~~~" 	\\
-    -e "PIM_DB_USER=~~~~" 	\\
+    -e "PHP_MEM_LIMIT=512"  \\
+    -e "RUN_SCRIPTS=1"      \\
+    -e "PIM_DB_HOST=~~~"    \\
+    -e "PIM_DB_PORT=3306"   \\
+    -e "PIM_DB_NAME=~~~~"   \\
+    -e "PIM_DB_USER=~~~~"   \\
     -e "PIM_DB_PASSWORD=~~~~" \\
-    -e "PIM_PROVISION=1" 	\\
+    -e "PIM_PROVISION=1"    \\
      theiconic/docker-nginx-akeneo
 EOF
 
