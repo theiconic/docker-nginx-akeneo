@@ -6,7 +6,12 @@ This is a simple Akeneo PIM Docker image running PHP7, Nginx with PHP-FPM.
 
 This borrows largely from two worlds [Akeneo PIM](https://docs.akeneo.com/1.6/developer_guide/installation/system_requirements/system_install_ubuntu_1604.html) and [nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm). Pull requests are encouraged.
 
-## Running Service Clusters
+First checkout Akeneo PIM repository
+```
+git clone https://github.com/akeneo/pim-community-standard.git preferred-directory
+```
+
+## # Running Service Clusters
 It's easy as:
 1. Clone this repository
 ```BASH
@@ -15,7 +20,7 @@ cd docker-nginx-akeneo
 ```
 2. Then provision the systems. Now, this could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
 ```
-$ > ./install.sh
+$ > ./install.sh /path/to/preferred-directory
 ```
 3. Subsequent runs cab be done just by running:
 ```
@@ -25,8 +30,8 @@ $ > ./run.sh
 ***That's it!*** Remember to add the IP to your `/etc/hosts` for convinience.
 
 
-## Running Image as stand-alone
-First create an image tag
+## # Running Image as stand-alone
+Create an image tag
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
 cd docker-nginx-akeneo
