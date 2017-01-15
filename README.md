@@ -20,8 +20,32 @@ cd docker-nginx-akeneo
 ```
 2. Then provision the systems. Now, this could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
 ```
+$ > cp .env.dist -uv .env
+# Update the .env with your custom environment variables
+$ > vim .env # Or whatever
 $ > ./install.sh /path/to/preferred-directory
 ```
+**Sample .env file**
+```
+# .env
+PHP_MEM_LIMIT=512
+WEBROOT=/var/www/pim
+# Keep this empty
+RUN_SCRIPTS=
+PIM_WEB_PROCESS_USER=1000
+# Set this as 1 to enable provisioning
+PIM_PROVISION=1
+MYSQL_ROOT_PASSWORD=l0r3m
+WORKING_DIR=/home/rover/Workspace/Projects/akeneo.dev
+
+# PIM configs
+PIM_DB_HOST=mysql
+PIM_DB_PORT=3306
+PIM_DB_NAME=pim
+PIM_DB_USER=p1m_user
+PIM_DB_PASSWORD=
+```
+
 3. Subsequent runs cab be done just by running:
 ```
 $ > ./run.sh
@@ -30,7 +54,7 @@ $ > ./run.sh
 ***That's it!*** Remember to add the IP to your `/etc/hosts` for convinience.
 
 
-## # Running Image as stand-alone
+## # Running Image as stand-alone (Optional)
 Create an image tag
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
@@ -41,7 +65,7 @@ docker build -t theiconic/docker-nginx-akeneo . # Note the "."
 
 Then create a simple run file to encapsulate all options:
 ```BASH
-cat > run.sh <<-EOF
+cat > run_pim.sh <<-EOF
 SOURCE_FOLDER=$1
 # Run the image
 exec docker run --detach    \\
@@ -61,12 +85,9 @@ exec docker run --detach    \\
      theiconic/docker-nginx-akeneo
 EOF
 
-#### Setting environment variable
-***PIM_PROVISION=1*** is only necessasry for the first run. For subsequent run, this could be removed.
-***PIM_WEB_PROCESS_USER*** is the ID for the repo user, or user running the `docker run`. Provisioning will fail if user id `alpine` is mapped to invalid ID. Defaults to 1000.
-***RUN_SCRIPTS*** should always be set to 1. Hopefully in future iterations this will be on by default.
+chmod u+x run_pim.sh
 
-chmod u+x run.sh
+./run_pim.sh
 ```
 
 
