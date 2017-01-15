@@ -7,9 +7,9 @@ PIM_WEB_PROCESS_USER="${PIM_WEB_PROCESS_USER:=1000}"
 
 function make_process_user()
 {
-	if [ $(id -u "${PIM_WEB_PROCESS_USER}"; echo $? ) -ne 0 ]; then
+	if [ $(id -u alpine > /dev/null 2>&1; echo $? ) -ne 0 ]; then
 		addgroup -g "${PIM_WEB_PROCESS_USER}" alpine
-    	adduser -u "${PIM_WEB_PROCESS_USER}" -G alpine alpine
+    	adduser -D -u "${PIM_WEB_PROCESS_USER}" -G alpine alpine
 	fi
 }
 
@@ -72,6 +72,8 @@ child.close()
 EOF
 
 	python /tmp/composer_install.py
+
+
 	
 }
 
@@ -109,8 +111,14 @@ if [ -d "${WEBROOT}" ]; then
 	gosu alpine php "${WEBROOT}"/app/console cache:clear --env=dev
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then
+
+		if [ ! -d "${WEBROOT}/web/js" ]; then gosu alpine mkdir "${WEBROOT}/web/js"; fi
+		
 		gosu alpine php "${WEBROOT}"/app/console pim:install --env=dev --force
 	fi
+	gosu alpine php "${WEBROOT}"/app/console  --env=dev oro:translation:dump en_US
+
+	chown -R alpine: "${WEBROOT}" # This could be controversial
 
 	# Make cache writeable
 	chmod 777 -R "${WEBROOT}/app/cache"
