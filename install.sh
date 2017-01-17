@@ -63,7 +63,7 @@ print_msg "====== Bringing empty service ..."
 	export SOURCE_PATH="$1"
 	docker-compose up -d || exit 22
 	# Store the working directory
-	sed -i "s|WORKING_DIR=|WORKING_DIR=$(realpath ${SOURCE_PATH})|g" ./.env
+	sed -i -E "s|WORKING_DIR=\$|WORKING_DIR=$(realpath ${SOURCE_PATH})|g" ./.env
 
 	WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
     print_msg "\nWeb service listening at http://${WEB_APP_IP}/"

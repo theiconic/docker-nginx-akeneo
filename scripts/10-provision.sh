@@ -36,7 +36,7 @@ function composer_install()
 			 	gosu alpine composer require -d $1 alcaeus/mongo-php-adapter --ignore-platform-reqs --no-scripts 
 			fi # Check that mongodb-odm-bundle can be installed safely
 		else
-			printf "    skipping"
+			printf "    skipping\n"
 
 		fi # Check for mongo-php-adapter exists
 		
@@ -112,9 +112,18 @@ if [ -d "${WEBROOT}" ]; then
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then
 
-		if [ ! -d "${WEBROOT}/web/js" ]; then gosu alpine mkdir "${WEBROOT}/web/js"; fi
+		# Add other necessary folders
+		for f in js media uploads; do
+			if [ ! -d "${WEBROOT}/web/${f}" ]; then
+				echo "Creaing folder ${WEBROOT}/web/${f} ..."
+				gosu alpine mkdir -p "${WEBROOT}/web/${f}"
+				chmod 777 "${WEBROOT}/web/${f}"
+			fi
+		done
 		
+		CWDir=$(pwd) && cd "${WEBROOT}" # Without being in this folder, things will go awry
 		gosu alpine php "${WEBROOT}"/app/console pim:install --env=dev --force
+		cd "${CWDir}"
 	fi
 	gosu alpine php "${WEBROOT}"/app/console  --env=dev oro:translation:dump en_US
 
@@ -123,6 +132,7 @@ if [ -d "${WEBROOT}" ]; then
 	# Make cache writeable
 	chmod 777 -R "${WEBROOT}/app/cache"
 	chmod 777 -R "${WEBROOT}/app/logs"
+
 fi
 
 supervisorctl restart nginx php-fpm7

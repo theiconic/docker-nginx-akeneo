@@ -11,6 +11,7 @@ RUN  sed -i -e 's/dl-cdn/dl-4/' /etc/apk/repositories && \
 	py-pexpect \
 	gosu@testing \
 	php7-dev \
+	php7-posix \
 	php7-xml \
 	php7-xmlreader \
 	php7-zip
@@ -23,7 +24,7 @@ RUN cd /usr/bin && \
 # Install MongoDb
 RUN  CWDir=$(pwd) && cd /tmp/ && \
 	git clone https://github.com/mongodb/mongo-php-driver.git && \
-	cd mongo-php-driver &&\
+	cd mongo-php-driver && \
 	git submodule sync && git submodule update --init && \
 	phpize && \
 	./configure && \
