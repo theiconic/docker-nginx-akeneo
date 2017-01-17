@@ -109,6 +109,8 @@ if [ -d "${WEBROOT}" ]; then
 	fi
 
 	gosu alpine php "${WEBROOT}"/app/console cache:clear --env=dev
+	gosu alpine php "${WEBROOT}"/app/console cache:warmup --env=dev
+	
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then
 
@@ -122,6 +124,7 @@ if [ -d "${WEBROOT}" ]; then
 		done
 		
 		CWDir=$(pwd) && cd "${WEBROOT}" # Without being in this folder, things will go awry
+		chmod 777 -R /tmp/pim # ?? Really?
 		gosu alpine php "${WEBROOT}"/app/console pim:install --env=dev --force
 		cd "${CWDir}"
 	fi
