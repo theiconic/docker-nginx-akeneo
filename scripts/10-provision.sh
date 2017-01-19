@@ -63,7 +63,7 @@ child = pexpect.spawn('gosu alpine composer install -o -d $1')
 
 while True:
     try:
-        child.expect('\):')
+        child.expect('\):', timeout=120)
         child.sendline()
     except pexpect.EOF:
         child.sendline('exit');
