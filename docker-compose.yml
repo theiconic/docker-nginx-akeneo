@@ -25,7 +25,6 @@ services:
         build: .
         image: pim/docker-akeneo-apline
         container_name: "akeneo_pim_app"
-        env_file: "./.env"
         volumes:
             - "${SOURCE_PATH}:/var/www/pim/"
             - "./scripts:/var/www/html/scripts"
@@ -36,7 +35,20 @@ services:
             akeneo_network:
                 ipv4_address: 192.168.231.10
                 aliases:
-                    - akeneo.pim
+                       - akeneo.pim
+#
+# Uncomment this lines if you want Xdebug (Dev)
+#       # X-DEBUG Proxy for remote debugging php7fpm
+#    dbgpproxy:
+#        image: christianbladescb/dbgpproxy
+#        restart: always
+#        container_name: "akeneo_pim_xdebug"
+#        ports:
+#            - "9002:9001"
+#        networks:
+#            - akeneo_network
+
+
 # volumes:
     
 networks:
