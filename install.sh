@@ -38,6 +38,7 @@ EOF
 
 function provision_app()
 {
+	docker exec akeneo_pim_app /bin/bash /build.sh
 	docker exec akeneo_pim_app /bin/bash /var/www/html/scripts/10-provision.sh
 }
 
