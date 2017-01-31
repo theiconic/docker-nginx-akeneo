@@ -48,13 +48,15 @@ PIM_DB_PASSWORD=
 
 3. Subsequent runs cab be done just by running:
 ```
-$ > ./run.sh
+$ > ./start.sh
+
+$ > ./stop.sh # To stop all services
 ```
 
 ***That's it!*** Remember to add the IP to your `/etc/hosts` for convinience.
 
 
-## # Running Image as stand-alone (Optional)
+## # Running Image as stand-alone (Optional) ** Advanced
 Create an image tag
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
