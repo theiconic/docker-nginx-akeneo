@@ -7,9 +7,9 @@ PIM_WEB_PROCESS_USER="${PIM_WEB_PROCESS_USER:=1000}"
 
 function make_process_user()
 {
-	if [ $(id -u "${PIM_WEB_PROCESS_USER}"; echo $? ) -ne 0 ]; then
+	if [ $(id -u alpine > /dev/null 2>&1; echo $? ) -ne 0 ]; then
 		addgroup -g "${PIM_WEB_PROCESS_USER}" alpine
-    	adduser -u "${PIM_WEB_PROCESS_USER}" -G alpine alpine
+    	adduser -D -u "${PIM_WEB_PROCESS_USER}" -G alpine alpine
 	fi
 }
 
@@ -36,7 +36,7 @@ function composer_install()
 			 	gosu alpine composer require -d $1 alcaeus/mongo-php-adapter --ignore-platform-reqs --no-scripts 
 			fi # Check that mongodb-odm-bundle can be installed safely
 		else
-			printf "    skipping"
+			printf "    skipping\n"
 
 		fi # Check for mongo-php-adapter exists
 		
@@ -63,7 +63,7 @@ child = pexpect.spawn('gosu alpine composer install -o -d $1')
 
 while True:
     try:
-        child.expect('\):')
+        child.expect('\):', timeout=120)
         child.sendline()
     except pexpect.EOF:
         child.sendline('exit');
@@ -72,6 +72,8 @@ child.close()
 EOF
 
 	python /tmp/composer_install.py
+
+
 	
 }
 
@@ -107,14 +109,33 @@ if [ -d "${WEBROOT}" ]; then
 	fi
 
 	gosu alpine php "${WEBROOT}"/app/console cache:clear --env=dev
+	gosu alpine php "${WEBROOT}"/app/console cache:warmup --env=dev
+	
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then
+
+		# Add other necessary folders
+		for f in js media uploads; do
+			if [ ! -d "${WEBROOT}/web/${f}" ]; then
+				echo "Creaing folder ${WEBROOT}/web/${f} ..."
+				gosu alpine mkdir -p "${WEBROOT}/web/${f}"
+				chmod 777 "${WEBROOT}/web/${f}"
+			fi
+		done
+		
+		CWDir=$(pwd) && cd "${WEBROOT}" # Without being in this folder, things will go awry
+		chmod 777 -R /tmp/pim # ?? Really?
 		gosu alpine php "${WEBROOT}"/app/console pim:install --env=dev --force
+		cd "${CWDir}"
 	fi
+	gosu alpine php "${WEBROOT}"/app/console  --env=dev oro:translation:dump en_US
+
+	chown -R alpine: "${WEBROOT}" # This could be controversial
 
 	# Make cache writeable
 	chmod 777 -R "${WEBROOT}/app/cache"
 	chmod 777 -R "${WEBROOT}/app/logs"
+
 fi
 
 supervisorctl restart nginx php-fpm7

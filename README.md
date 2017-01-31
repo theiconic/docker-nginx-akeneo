@@ -6,9 +6,58 @@ This is a simple Akeneo PIM Docker image running PHP7, Nginx with PHP-FPM.
 
 This borrows largely from two worlds [Akeneo PIM](https://docs.akeneo.com/1.6/developer_guide/installation/system_requirements/system_install_ubuntu_1604.html) and [nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm). Pull requests are encouraged.
 
+First checkout Akeneo PIM repository
+```
+git clone https://github.com/akeneo/pim-community-standard.git preferred-directory
+```
 
-## Running Image as stand-alone
-First create an image tag
+## # Running Service Clusters
+It's easy as:
+1. Clone this repository
+```BASH
+git clone https://github.com/theiconic/docker-nginx-akeneo.git
+cd docker-nginx-akeneo
+```
+2. Then provision the systems. Now, this could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
+```
+$ > cp .env.dist -uv .env
+# Update the .env with your custom environment variables
+$ > vim .env # Or whatever
+$ > ./install.sh /path/to/preferred-directory
+```
+**Sample .env file**
+```
+# .env
+PHP_MEM_LIMIT=512
+WEBROOT=/var/www/pim
+# Keep this empty
+RUN_SCRIPTS=
+PIM_WEB_PROCESS_USER=1000
+# Set this as 1 to enable provisioning
+PIM_PROVISION=1
+MYSQL_ROOT_PASSWORD=l0r3m
+WORKING_DIR=/home/rover/Workspace/Projects/akeneo.dev
+
+# PIM configs
+PIM_DB_HOST=mysql
+PIM_DB_PORT=3306
+PIM_DB_NAME=pim
+PIM_DB_USER=p1m_user
+PIM_DB_PASSWORD=
+```
+
+3. Subsequent runs cab be done just by running:
+```
+$ > ./start.sh
+
+$ > ./stop.sh # To stop all services
+```
+
+***That's it!*** Remember to add the IP to your `/etc/hosts` for convinience.
+
+
+## # Running Image as stand-alone (Optional) ** Advanced
+Create an image tag
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
 cd docker-nginx-akeneo
@@ -18,7 +67,7 @@ docker build -t theiconic/docker-nginx-akeneo . # Note the "."
 
 Then create a simple run file to encapsulate all options:
 ```BASH
-cat > run.sh <<-EOF
+cat > run_pim.sh <<-EOF
 SOURCE_FOLDER=$1
 # Run the image
 exec docker run --detach    \\
@@ -27,17 +76,20 @@ exec docker run --detach    \\
     -v "\${PWD}/scripts:/var/www/html/scripts" \\
     -v "\${PWD}/conf:/var/www/html/conf"       \\
     -e "PIM_WEB_PROCESS_USER=\$(id -u)"         \\
-    -e "PHP_MEM_LIMIT=512"	\\
-    -e "RUN_SCRIPTS=1" 		\\
-    -e "PIM_DB_HOST=~~~" 	\\
-    -e "PIM_DB_PORT=3306" 	\\
-    -e "PIM_DB_NAME=~~~~" 	\\
-    -e "PIM_DB_USER=~~~~" 	\\
+    -e "PHP_MEM_LIMIT=512"  \\
+    -e "RUN_SCRIPTS=1"      \\
+    -e "PIM_DB_HOST=~~~"    \\
+    -e "PIM_DB_PORT=3306"   \\
+    -e "PIM_DB_NAME=~~~~"   \\
+    -e "PIM_DB_USER=~~~~"   \\
     -e "PIM_DB_PASSWORD=~~~~" \\
-    -e "PIM_PROVISION=1" 	\\
+    -e "PIM_PROVISION=1"    \\
      theiconic/docker-nginx-akeneo
 EOF
-chmod u+x run.sh
+
+chmod u+x run_pim.sh
+
+./run_pim.sh
 ```
 
 
