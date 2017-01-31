@@ -58,6 +58,7 @@ RUN php_ini_path=$(realpath $(php7 --ini | grep -e ".*\.ini files in" | cut -d':
     done
 
 ADD build/scripts/start.sh /start.sh
+ADD build/scripts/build.sh /build.sh
 
 # Ensure it's executable
 RUN chmod gu+x /start.sh
