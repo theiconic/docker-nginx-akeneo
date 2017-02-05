@@ -88,7 +88,7 @@ EOF
 function provision_app()
 {
 	print_msg "Pre-installing empty project ..."
-#	composer_install
+	composer_install
 	
 	# Set the project params
 	print_msg "Settting project settings \"parameters.yml\" etc."
@@ -136,6 +136,6 @@ print_msg "Done"
 
 # Provision the system
 print_msg "====== Provisioning Application server"
-	# provision_database
+	provision_database
 	provision_app
 print_msg "Done"
