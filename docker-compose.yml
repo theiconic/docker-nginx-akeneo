@@ -57,7 +57,7 @@ services:
 # Uncomment to use Selenium / Behat setup
 #     selenium:
 #         image: selenium/standalone-firefox-debug:2.53.1
-#         ports: 
+#         ports:
 #             - 4444:4444
 #             - 5901:5900
 #         environment:
@@ -78,6 +78,6 @@ services:
 #        networks:
 #            - akeneo_network
 
-   
+
 networks:
     akeneo_network:
