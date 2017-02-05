@@ -1,1 +1,4 @@
+# ignore local files
 .env
+.composer
+.mysql_data

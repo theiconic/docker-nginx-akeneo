@@ -6,16 +6,17 @@ services:
         image: mysql:5.6
         restart: always
         container_name: "akeneo_pim_mysql"
-        env_file: "./.env"
+        environment:
+            - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
         command: "--max_allowed_packet=1000M --connect_timeout=72"
-        labels:
-            - com.pim.alias.mysql
         volumes:
             - "./.mysql_data/mysql:/var/lib/mysql"
             - "./conf/mysql/:/etc/mysql/conf.d"
+        user: "$USER_ID"
+        ports:
+            - "3306:3306"
         networks:
             akeneo_network:
-                ipv4_address: 192.168.231.20
                 aliases:
                     - mysql.db
 
@@ -23,36 +24,60 @@ services:
     # Akeneo Pim
     akeneo:
         build: .
-        image: pim/docker-akeneo-apline
+        image: pim/php-fpm-apline
         container_name: "akeneo_pim_app"
+        environment:
+            - "COMPOSER_CACHE_DIR=/cache"
         volumes:
             - "${SOURCE_PATH}:/var/www/pim/"
-            - "./scripts:/var/www/html/scripts"
-            - "./conf:/var/www/html/conf"
-        labels:
-            - com.pim.alias.web_app
+            - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
+            - "./.composer/cache:/cache"
+        working_dir: /var/www/pim/
+        user: "$USER_ID"
         networks:
             akeneo_network:
-                ipv4_address: 192.168.231.10
                 aliases:
-                       - akeneo.pim
+                    - akeneo.pim
+
+    nginx:
+        image: nginx:alpine
+        container_name: "akeneo_pim_nginx"
+        volumes:
+            - "./conf/nginx/nginx-site.conf:/etc/nginx/conf.d/default.conf:ro"
+        ports:
+            - 80:80
+            - 443:443
+        depends_on:
+            - akeneo
+        volumes_from:
+            - akeneo:ro
+        networks:
+           - akeneo_network
+
+# Uncomment to use Selenium / Behat setup
+#     selenium:
+#         image: selenium/standalone-firefox-debug:2.53.1
+#         ports: 
+#             - 4444:4444
+#             - 5901:5900
+#         environment:
+#             - "no_proxy=localhost"
+#         user: "$USER_ID"
+#         container_name: akeneo_pim_selenium
+#         networks:
+#             akeneo_network:
 #
 # Uncomment this lines if you want Xdebug (Dev)
-#       # X-DEBUG Proxy for remote debugging php7fpm
+#       # X-DEBUG Proxy for remote debugging php-fpm
 #    dbgpproxy:
 #        image: christianbladescb/dbgpproxy
 #        restart: always
 #        container_name: "akeneo_pim_xdebug"
 #        ports:
-#            - "9002:9001"
+#            - "9001:9000"
 #        networks:
 #            - akeneo_network
 
-
-# volumes:
-    
+   
 networks:
     akeneo_network:
-        external:
-            name: my_akeneo_network
-       
