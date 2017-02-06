@@ -12,9 +12,9 @@ function print_msg()
 
 # If you wish to run this everytime you start your machines
 # on a Linux machine, you could uncomment these lines
-#if [[ "`uname`" == '=Linux' ]]; then
-#    ./linux_machine.sh $MACHINE_NAME
-#fi
+if [[ "`uname`" == 'Linux' ]]; then
+    ./linux_machine.sh $MACHINE_NAME
+fi
 
 ## ------------------------------------
 ## Bring up the infrastructure
