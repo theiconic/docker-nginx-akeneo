@@ -12,7 +12,6 @@ services:
         volumes:
             - "mysql_data:/var/lib/mysql"
             - "./conf/mysql/:/etc/mysql/conf.d"
-        user: "$USER_ID"
         ports:
             - "3306:3306"
         networks:

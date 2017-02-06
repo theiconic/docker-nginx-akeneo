@@ -1,11 +1,12 @@
 #!/bin/bash
 
 
-DOCKER_EXEC="docker exec akeneo_pim_app "
-MACHINE_NAME="${MACHINE_NAME-machine}"
 
 # Use configuration for environment vars
 source ./.env
+
+DOCKER_EXEC="docker exec akeneo_pim_app "
+MACHINE_NAME="${MACHINE_NAME-machine}"
 
 function print_msg()
 {
