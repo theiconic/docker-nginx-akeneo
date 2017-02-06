@@ -132,7 +132,9 @@ print_msg "====== Bringing empty service ..."
 	WEB_APP_IP=$(docker-machine ip $MACHINE_NAME)
     print_msg "\nWeb service listening at http://${WEB_APP_IP}/"
     print_msg "For convience, you could add ${WEB_APP_IP} to /etc/hosts."
-    print_msg "eg. echo '${WEB_APP_IP}	akeneo.pim' >> /etc/hosts\n"
+    print_msg "eg. echo '${WEB_APP_IP}	akeneo.pim akeneo.pim.local \
+    		akeneo.db akeneo.db.local akeneo.behat.local \
+    		akeneo.behat.local' >> /etc/hosts\n"
 print_msg "Done"
 
 # Provision the system

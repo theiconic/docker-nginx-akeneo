@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source .env
 MACHINE_NAME="${MACHINE_NAME-machine}"
 DOCKER_EXEC="docker exec akeneo_pim_app "
 
