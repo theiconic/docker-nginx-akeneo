@@ -25,7 +25,8 @@ fi
 echo "Mounting host home folder..."
 COMMANDS=$(cat <<-EOF
     ls -1 /hosthome | while read d
-    do sudo mount -o ${BINDING}bind,uid=$(id -u),gid=$(id -g) \
+    do sudo mkdir -p "/home/\${d}" && \
+    sudo mount -o ${BINDING}bind,uid=$(id -u),gid=$(id -g) \
         "/hosthome/\${d}" "/home/\${d}"
     done
 EOF
