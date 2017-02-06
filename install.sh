@@ -77,7 +77,7 @@ if [ -d "\${WEBROOT}" ]; then
 		sed -i -E "s#database_port: (.*)#database_port: ${PIM_DB_PORT}#" "\${params_file}"
 		sed -i -E "s#database_name: (.*)#database_name: ${PIM_DB_NAME}#" "\${params_file}"
 		sed -i -E "s#database_user: (.*)#database_user: ${PIM_DB_USER}#" "\${params_file}"
-		sed -i -E "s#database_password: (.*)#database_password: \${PIM_DB_PASSWORD}#" "\${params_file}"
+		sed -i -E "s#database_password: (.*)#database_password: ${PIM_DB_PASSWORD}#" "\${params_file}"
 	fi
 
 fi
