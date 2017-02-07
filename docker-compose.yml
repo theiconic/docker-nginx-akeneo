@@ -10,7 +10,7 @@ services:
             - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
         command: "--max_allowed_packet=1000M --connect_timeout=72"
         volumes:
-            - "./.mysql_data/mysql:/var/lib/mysql"
+            - "mysql_data:/var/lib/mysql"
             - "./conf/mysql/:/etc/mysql/conf.d"
         ports:
             - "3306:3306"
@@ -29,7 +29,6 @@ services:
             - "COMPOSER_CACHE_DIR=/cache"
         volumes:
             - "${SOURCE_PATH}:/var/www/pim/"
-            - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
             - "./.composer/cache:/cache"
         working_dir: /var/www/pim/
         user: "$USER_ID"
