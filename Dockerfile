@@ -13,8 +13,10 @@ RUN  \
 	git \
 	freetype-dev \
 	icu-dev \
+	libjpeg-turbo-dev \
 	libmcrypt-dev \
 	libpng-dev \
+	jpeg-dev \
 	openssl-dev \
 	python \
 	zlib-dev
@@ -25,8 +27,24 @@ RUN apk update && \
 
 ADD "./conf/php/php.ini" /usr/local/etc/php/
 
-# Install additional packages
-RUN docker-php-ext-install gd mcrypt intl pdo_mysql zip > /dev/null
+# Install gd extension
+RUN docker-php-ext-configure gd \
+    --with-gd \
+    --with-freetype-dir=/usr/include/ \
+    --with-png-dir=/usr/include/ \
+    --with-jpeg-dir=/usr/include/ && \
+  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
+  docker-php-ext-install -j${NPROC} gd
+
+# Install additional extensions
+RUN docker-php-ext-install \
+	exif \
+	intl \
+	mcrypt \
+	pdo_mysql \
+	posix \
+	zip \
+	> /dev/null
 
 
 # Install MongoDb and APCu through PECL
