@@ -1,9 +1,31 @@
 #!/bin/bash
 
 
+# Copy the configuration file
+COPY='rsync -uv ' # Just because some platforms don't know
+				  # `cp -u`!
+S_PLATFORM=`uname`
+IS_LINUX=
+
+if [ "${S_PLATFORM}" == 'Linux' ]; then
+	COPY='cp -uv '
+	IS_LINUX=1
+fi
+
+$COPY -b ./.env.dist ./.env
+if [ ! -z "${IS_LINUX}" ]; then
+	sed -i -E "s|USER_ID=(.*)|USER_ID=$(id -u)\:$(id -g)|g" ./.env
+fi
 
 # Use configuration for environment vars
 source ./.env
+if [ -z "${PIM_DB_NAME}" ] || [ -z "${PIM_DB_USER}" ]; then
+	echo ""
+	echo "Please set your environment values in '.env' file "
+	echo "and try again. Thank you."
+	echo ""
+	exit 1
+fi
 
 DOCKER_EXEC="docker exec akeneo_pim_app "
 MACHINE_NAME="${MACHINE_NAME-machine}"
@@ -102,6 +124,8 @@ function provision_app()
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then # \\$PIM_PROVISION is from .env files
 		$DOCKER_EXEC app/console pim:install --env=dev --force
+	else
+		$DOCKER_EXEC app/console pim:install --env=dev
 	fi
 
 	# Temp. work around :)
@@ -132,9 +156,8 @@ print_msg "====== Bringing empty service ..."
 	WEB_APP_IP=$(docker-machine ip $MACHINE_NAME)
     print_msg "\nWeb service listening at http://${WEB_APP_IP}/"
     print_msg "For convience, you could add ${WEB_APP_IP} to /etc/hosts."
-    print_msg "eg. echo '${WEB_APP_IP}	akeneo.pim akeneo.pim.local \
-    		akeneo.db akeneo.db.local akeneo.behat.local \
-    		akeneo.behat.local' >> /etc/hosts\n"
+    print_msg "eg."
+    print_msg "  echo '${WEB_APP_IP}	akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat.local akeneo.behat.local' >> /etc/hosts"
 print_msg "Done"
 
 # Provision the system
