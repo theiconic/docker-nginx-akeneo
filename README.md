@@ -38,15 +38,18 @@ $ > vim .env # Or whatever
 **Sample .env file**
 ```
 # .env
+WEBROOT=/var/www/pim/
 PIM_PROVISION=
 MYSQL_ROOT_PASSWORD=043h
 SOURCE_PATH=/home/waldorf/Workspace/Projects/pim/
 # Your docker machine name if using one
 MACHINE_NAME=my-machine
 # You can get this from running "id -u"
+COMPOSER_CACHE_PATH=.composer/cache
 USER_ID=1000:1500
 
 # PIM configs
+RUNNING_ENV=dev
 PIM_DB_HOST=mysql
 PIM_DB_PORT=3306
 PIM_DB_NAME=pim_db
@@ -106,3 +109,10 @@ you could
 ```
 docker exec akeneo_pim_app rm -rf /var/www/pim/app/cache/*
 ```
+
+## Some other useful resources
+To further understand the rationale behind mounting the App (PHP-FPM) instance differently please refer to comments from:
+- http://stackoverflow.com/a/36908278
+- https://github.com/docker/machine/issues/3234#issuecomment-202596213
+
+- https://gist.github.com/dschep/8f617de28157f8d35e69 \[Current hack\]
