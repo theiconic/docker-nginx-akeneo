@@ -85,6 +85,90 @@ eg.
     Or 127.0.0.1 if not using docker machine
 ```
 
+## Behat Setup
+Akeneo comes bundled with great BDD that runs off Behat amongst others, to harness hacking, you could enable the Behat service.
+
+- First, create a new database and user for behat fixtures.
+This assumes that your `${PIM_BEHAT_DB_HOST}` points to your mysql running container. 
+```
+$ > source .env
+$ > mysql -uroot -p${MYSQL_ROOT_PASSWORD} -h ${PIM_BEHAT_DB_HOST}
+# Inside mysql prompt
+$ MySQL [(none)] > CREATE DATABASE IF NOT EXISTS <your-behat-db-name>;
+$ MySQL [(none)] > GRANT ALL PRIVILEGES ON <your-behat-db-name>.* TO <your-behat-db-user>@'%' IDENTIFIED BY '<desired-password>';
+$ MySQL [(none)] > FLUSH PRIVILEGES;
+```
+***For more information** please refer to [Akeneo Official Behat page](https://docs.akeneo.com/1.5/reference/best_practices/core/behat.html#configure-behat)*
+
+- Then update the `.env` and `app/config/parameters_test.yml` to have same credentials you just created
+For example:
+```
+# .env file
+
+# Behat stuff (Optional)
+PIM_BEHAT_DB_HOST=mysql-host
+PIM_BEHAT_DB_PORT=3306
+PIM_BEHAT_DB_NAME=pim_behat_db
+PIM_BEHAT_DB_USER=pim_behat
+PIM_BEHAT_DB_PASSWORD=
+```
+
+And inside `app/config/parameters_test.yml` **in your Akeneo Pim project folder**, make the following settings . If you don't have one just copy `cp app/config/parameters_test.yml.dist app/config/parameters_test.yml`.
+
+```
+# app/config/parameters_tests.yml file
+
+parameters:
+    database_driver: pdo_mysql
+    database_host: mysql-host
+    database_port: 3306
+    database_name: pim_behat_db
+    database_user: pim_behat
+    database_password: null
+```
+- Also update your `behat.yml` **in your Akeneo Pim project folder**. If you don't have one, copy from dist as well `cp behat.yml.dist behat.yml`.
+```
+# behat.yml file
+default:
+    paths:
+        features: features
+    context:
+        class:  Context\FeatureContext
+        parameters:
+            base_url: http://akeneo.behat.local/ # <------------ your akeneo host
+            timeout: 30000
+            window_width: 1280
+            window_height: 1024
+    extensions:
+        Behat\MinkExtension\Extension:
+            default_session: symfony2
+            show_cmd: chromium-browser %s
+            selenium2:
+              wd_host: "http://akeneo_pim_selenium:4444/wd/hub" <--- points to the selenium service
+            base_url: http://akeneo.behat.local/ # <------------------- Same as above
+            files_path: 'features/Context/fixtures/'
+        Behat\Symfony2Extension\Extension:
+            kernel:
+                env: behat
+                debug: false
+        SensioLabs\Behat\PageObjectExtension\Extension: ~
+
+```
+
+- Uncomment the Selenium service in your `docker-compose.yml` and restart your services `./stop.sh && ./start.sh`  or manually.
+- Install the Behat setup and fixutres
+```
+docker exec akeneo_pim_app app/console pim:install --env=behat --force
+```
+### Running the Behat
+Just run:
+```
+docker exec akeneo_pim_app bin/behat
+```
+Sit back and enjoy.
+
+*If you wish to see what your tests are doing, you may connect via VNC to `akeneo.pim:5901`. The password is `secret`*
+
 #### Setting environment variable
 ***PIM_PROVISION=1*** is only necessasry for the first run. For subsequent run, this could be removed.
 
