@@ -28,9 +28,9 @@ services:
         environment:
             - "COMPOSER_CACHE_DIR=/cache"
         volumes:
-            - "${SOURCE_PATH}:/var/www/pim/"
-            - "./.composer/cache:/cache"
-        working_dir: /var/www/pim/
+            - "${SOURCE_PATH}:${WEBROOT}"
+            - "${COMPOSER_CACHE_PATH}:/cache"
+        working_dir: "${WEBROOT}"
         user: "$USER_ID"
         networks:
             akeneo_network:
@@ -41,32 +41,32 @@ services:
         image: nginx:alpine
         container_name: "akeneo_pim_nginx"
         volumes:
-            - "./conf/nginx/nginx-site.conf:/etc/nginx/conf.d/default.conf:ro"
+            - "./conf/nginx/sites-available:/etc/nginx/conf.d/:ro"
         ports:
             - 80:80
             - 443:443
         depends_on:
             - akeneo
+            - mysql
         volumes_from:
             - akeneo:ro
         networks:
-           - akeneo_network
+            - akeneo_network
 
 # Uncomment to use Selenium / Behat setup
-#     selenium:
+#    selenium:
 #         image: selenium/standalone-firefox-debug:2.53.1
 #         ports:
 #             - 4444:4444
 #             - 5901:5900
 #         environment:
 #             - "no_proxy=localhost"
-#         user: "$USER_ID"
 #         container_name: akeneo_pim_selenium
 #         networks:
-#             akeneo_network:
-#
+#            - akeneo_network
+
 # Uncomment this lines if you want Xdebug (Dev)
-#       # X-DEBUG Proxy for remote debugging php-fpm
+#   # X-DEBUG Proxy for remote debugging php-fpm
 #    dbgpproxy:
 #        image: christianbladescb/dbgpproxy
 #        restart: always
