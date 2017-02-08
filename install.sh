@@ -1,20 +1,56 @@
 #!/bin/bash
 
+EXEC_NAME="${$0#./}"
+
+# Check if we are using Docker machine
+MACHINE_NAME=
+while test $# -gt 0; do
+	case "$1" in
+	-h|--help)
+		echo " "
+		echo -e "\033[1;34m"
+        echo "${EXEC_NAME} - Akeneo PIM Service installer"
+        echo " "
+        echo "${EXEC_NAME} [-m,--using-machine=my-machine-name]"
+        echo " "
+        echo "options:"
+        echo "-m, --using-machine       docker machine name"
+        echo " "
+        echo " example ${EXEC_NAME} -m new-machine"
+        echo -e "\033[0m"
+        exit 0
+        ;;
+	-m|--using-machine)
+		MACHINE_NAME="$2"
+		shift
+		;;
+	*)
+		break
+		;;
+	esac
+	# Move to next parameter
+	shift
+done
 
 # Copy the configuration file
-COPY='rsync -uv ' # Just because some platforms don't know
-				  # `cp -u`!
+COPY='cp -v '
 S_PLATFORM=`uname`
 IS_LINUX=
 
 if [ "${S_PLATFORM}" == 'Linux' ]; then
-	COPY='cp -uv '
+	COPY="${COPY} --update " # Linux implementation support update flag
 	IS_LINUX=1
 fi
 
-$COPY -b ./.env.dist ./.env
-if [ ! -z "${IS_LINUX}" ]; then
-	sed -i -E "s|USER_ID=(.*)|USER_ID=$(id -u)\:$(id -g)|g" ./.env
+$COPY -b .env.dist .env
+# Store the machine name
+if [ -n "${MACHINE_NAME}" ]; then
+	sed -i -E "s|MACHINE_NAME=(.*)|MACHINE_NAME=${MACHINE_NAME}" .env
+fi
+
+# Linux is compatible with Boot2Docker, so let's mount correctly
+if [ -n "${IS_LINUX}" ]; then
+	sed -i -E "s|USER_ID=(.*)|USER_ID=$(id -u)\:$(id -g)|g" .env
 fi
 
 # Use configuration for environment vars
@@ -28,7 +64,6 @@ if [ -z "${PIM_DB_NAME}" ] || [ -z "${PIM_DB_USER}" ]; then
 fi
 
 DOCKER_EXEC="docker exec akeneo_pim_app "
-MACHINE_NAME="${MACHINE_NAME-machine}"
 
 function print_msg()
 {
@@ -52,8 +87,9 @@ function composer_install()
 		xcommand="composer require --update-no-dev --no-scripts -v 'doctrine/mongodb-odm-bundle' "
 		 # Check to see if we need to install composer
 		if [ $( $DOCKER_EXEC ${xcommand} 2> /dev/null; echo $?) -ne 0 ]; then
-			# Current Doctrine isn't PHP7 compliant, we'll need to 
+			# Current Doctrine 3.0 isn't PHP7 compliant, we'll need to
 			# Install a middleware to make this backwards compatible
+			# See https://github.com/alcaeus/mongo-php-adapter#goal
 		 	$DOCKER_EXEC composer require alcaeus/mongo-php-adapter --ignore-platform-reqs --no-scripts 
 		fi # Check that mongodb-odm-bundle can be installed safely
 	else
@@ -79,8 +115,6 @@ function set_parameter()
 {
 
 CONFIG_COMMAND=$(cat <<-EOF
-
-WEBROOT=/var/www/pim/
 
 if [ -d "\${WEBROOT}" ]; then
 
@@ -118,18 +152,18 @@ function provision_app()
 	set_parameter
 
 	print_msg "Warming up cache"
-	$DOCKER_EXEC app/console cache:clear --env=dev
-	$DOCKER_EXEC app/console cache:warmup --env=dev
+	$DOCKER_EXEC app/console cache:clear --env="${RUNNING_ENV}"
+	$DOCKER_EXEC app/console cache:warmup --env="${RUNNING_ENV}"
 	
 	# Only provision env if requested
 	if [ ! -z "${PIM_PROVISION}" ]; then # \\$PIM_PROVISION is from .env files
-		$DOCKER_EXEC app/console pim:install --env=dev --force
+		$DOCKER_EXEC app/console pim:install --env="${RUNNING_ENV}" --force
 	else
-		$DOCKER_EXEC app/console pim:install --env=dev
+		$DOCKER_EXEC app/console pim:install --env="${RUNNING_ENV}"
 	fi
 
 	# Temp. work around :)
-	$DOCKER_EXEC app/console  --env=dev oro:translation:dump en_US
+	$DOCKER_EXEC app/console  --env="${RUNNING_ENV}" oro:translation:dump en_US
 }
 
 function provision_database()
@@ -152,16 +186,27 @@ EOF
 # Bring up the infrastructure
 print_msg "====== Bringing empty service ..."
 	docker-compose up -d || exit 22
-	#WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
-	WEB_APP_IP=$(docker-machine ip $MACHINE_NAME)
+	if [ -n "${MACHINE_NAME}" ]; then
+	    WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
+	else
+	    WEB_APP_IP=$(docker-machine ip "${MACHINE_NAME}")
+	fi
     print_msg "\nWeb service listening at http://${WEB_APP_IP}/"
     print_msg "For convience, you could add ${WEB_APP_IP} to /etc/hosts."
     print_msg "eg."
-    print_msg "  echo '${WEB_APP_IP}	akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat.local akeneo.behat.local' >> /etc/hosts"
+    print_msg "  echo '${WEB_APP_IP} akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat akeneo.behat.local' | sudo tee -a /etc/hosts"
 print_msg "Done"
 
 # Provision the system
 print_msg "====== Provisioning Application server"
 	provision_database
 	provision_app
+	if [ -n "${MACHINE_NAME}" ]; then
+	    print_msg "Defining docker machine's local host address ..."
+	    	ETC_HOSTS=$(cat <<-EOF
+	echo "127.0.0.1 akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat akeneo.behat.local" | sudo tee -a /etc/hosts
+EOF
+)
+	    docker-machine ssh "${MACHINE_NAME} ${ETC_HOSTS}"
+	fi
 print_msg "Done"
