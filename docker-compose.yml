@@ -13,7 +13,7 @@ services:
             - "mysql_data:/var/lib/mysql"
             - "./conf/mysql/:/etc/mysql/conf.d"
         ports:
-            - "3306:3306"
+            - "${MYSQL_PORT}:3306"
         networks:
             akeneo_network:
                 aliases:
@@ -27,6 +27,7 @@ services:
         container_name: "akeneo_pim_app"
         environment:
             - "COMPOSER_CACHE_DIR=/cache"
+            - "WEBROOT=${WEBROOT}"
         volumes:
             - "${SOURCE_PATH}:${WEBROOT}"
             - "${COMPOSER_CACHE_PATH}:/cache"

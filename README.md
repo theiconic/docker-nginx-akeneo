@@ -80,7 +80,7 @@ $ > ./stop.sh # To stop all services
 ```
 For convience, you could add your docker-machine to /etc/hosts.
 eg. 
-    echo "$(docker-machine ip my-machine)	akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat.local akeneo.behat.local  >> /etc/hosts
+    echo "$(docker-machine ip my-machine)	akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat.local akeneo.behat.local | sudo tee -a /etc/hosts
     
     Or 127.0.0.1 if not using docker machine
 ```
