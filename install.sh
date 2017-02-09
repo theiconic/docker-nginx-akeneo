@@ -17,7 +17,7 @@ while test $# -gt 0; do
         echo "options:"
         echo "-m, --using-machine       docker machine name"
         echo " "
-        echo " example ${EXEC_NAME} -m new-machine"
+        echo " example ${EXEC_NAME} -m new-machine --provision"
         echo -e "\033[0m"
         exit 0
         ;;
