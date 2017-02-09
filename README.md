@@ -1,10 +1,12 @@
-# docker-nginx-akeneo
-Akeneo PIM docker using Nginx
+# Akeneo PIM Docker Service
+Akeneo PIM docker using Nginx and PHP 7
 
 ## Overview
 This is a simple Akeneo PIM Docker image running PHP7, Nginx with PHP-FPM.
 
 This borrows largely from two worlds [Akeneo PIM](https://docs.akeneo.com/1.6/developer_guide/installation/system_requirements/system_install_ubuntu_1604.html) and [nginx-php-fpm](https://github.com/ngineered/nginx-php-fpm). Pull requests are encouraged.
+
+Currently this is aimed at using Akeneo in development arena, but with extensive testing, this setup should be useful in production environment as well.
 
 First checkout Akeneo PIM repository
 ```
@@ -205,3 +207,12 @@ To further understand the rationale behind mounting the App (PHP-FPM) instance d
 - https://github.com/docker/machine/issues/3234#issuecomment-202596213
 
 - https://gist.github.com/dschep/8f617de28157f8d35e69 \[Current hack\]
+
+## Contributors
+
+* Yinka Asonibare - [yinka](https://github.com/ashon-ikon)
+* Marcelo Milhomem - [milhomem](https://github.com/milhomem)
+
+## License
+
+This Docker setup is released under the MIT License. See the license file for more details.
