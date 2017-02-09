@@ -20,7 +20,8 @@ fi
 ## ---------------------------------------
 print_msg "====== Staring Akeneo Service ..."
     docker-compose up -d || exit 22
-    if [ -n "${MACHINE_NAME}" ]; then
+    echo "${MACHINE_NAME}"
+    if [ -z "${MACHINE_NAME}" ]; then
 	    WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
 	else
 	    WEB_APP_IP=$(docker-machine ip "${MACHINE_NAME}")
