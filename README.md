@@ -13,12 +13,18 @@ git clone https://github.com/akeneo/pim-community-standard.git preferred-directo
 
 ## # Running Service Clusters
 It's easy as:
-1. Clone this repository
+- Clone this repository
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
 cd docker-nginx-akeneo
 ```
-2. Set your environment parameters
+- **Setup your docker-compose** as desired
+```
+$ > cp -v -b docker-compose.yml.dist docker-compose.yml
+$ > vim docker-compose.yml # or anything to edit
+```
+
+- Set your environment parameters
 ```
 $ > cp -v -b .env.dist .env
 ```
@@ -64,12 +70,12 @@ PIM_BEHAT_DB_USER=
 PIM_BEHAT_DB_PASSWORD=
 ```
 
-3. Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
+- Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
 ```
 $ > ./install.sh [--usring-machine my-docker-machine] --provision 
 
 ```
-4. Subsequent runs cab be done just by running:
+- Subsequent runs cab be done just by running:
 ```
 $ > ./start.sh
 

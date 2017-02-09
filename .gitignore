@@ -2,3 +2,4 @@
 # ignore local files
 .composer
 .mysql_data
+docker-compose.yml
