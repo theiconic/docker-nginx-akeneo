@@ -183,8 +183,7 @@ EOF
 	print_msg "===== Creating DB user ..."
 
 	docker exec akeneo_pim_mysql \
-		mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "${QUERIES}" \
-		> /dev/null 2>&1
+		mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "${QUERIES}"
 	print_msg "Done"
 }
 
