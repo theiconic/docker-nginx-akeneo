@@ -146,7 +146,7 @@ default:
     context:
         class:  Context\FeatureContext
         parameters:
-            base_url: http://akeneo.behat.local/ # <------------ your akeneo host
+            base_url: http://akeneo_pim_nginx:8081/ # <----- Configured to listen on port 8081 for Behat if using recommended setup
             timeout: 30000
             window_width: 1280
             window_height: 1024
@@ -156,7 +156,7 @@ default:
             show_cmd: chromium-browser %s
             selenium2:
               wd_host: "http://akeneo_pim_selenium:4444/wd/hub" <--- points to the selenium service
-            base_url: http://akeneo.behat.local/ # <------------------- Same as above
+            base_url: http://akeneo_pim_nginx:8081/ # <------------------- Same as above
             files_path: 'features/Context/fixtures/'
         Behat\Symfony2Extension\Extension:
             kernel:
