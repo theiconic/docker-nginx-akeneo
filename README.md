@@ -94,7 +94,7 @@ eg.
     Or 127.0.0.1 if not using docker machine
 ```
 
-## Behat Setup
+## # Behat Setup
 Akeneo comes bundled with great BDD that runs off Behat amongst others, to harness hacking, you could enable the Behat service.
 
 - First, create a new database and user for behat fixtures.
@@ -199,7 +199,7 @@ you could
 docker exec akeneo_pim_app rm -rf /var/www/pim/app/cache/*
 ```
 
-## Some other useful resources
+## # Some other useful resources
 To further understand the rationale behind mounting the App (PHP-FPM) instance differently please refer to comments from:
 - http://stackoverflow.com/a/36908278
 - https://github.com/docker/machine/issues/3234#issuecomment-202596213
