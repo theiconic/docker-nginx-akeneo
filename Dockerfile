@@ -2,7 +2,7 @@
 FROM php:7.1-fpm-alpine
 
 
-LABEL "Maintainer"="Yinka Asonibare <yinka.asonibare@theiconic.com.au>"
+LABEL "Maintainer"="THE ICONIC ENGINEERING TEAM <engineering@theiconic.com.au>"
 
 RUN  \
 	apk --update --no-cache add \
