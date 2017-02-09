@@ -24,6 +24,8 @@ $ > cp -v -b docker-compose.yml.dist docker-compose.yml
 $ > vim docker-compose.yml # or anything to edit
 ```
 
+- *If you need to create docker machine, please refer to [the creating docker-machine guide](https://docs.docker.com/machine/get-started/#/create-a-machine)* for your platform.
+
 - Set your environment parameters
 ```
 $ > cp -v -b .env.dist .env
