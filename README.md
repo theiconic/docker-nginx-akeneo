@@ -20,11 +20,11 @@ cd docker-nginx-akeneo
 ```
 2. Set your environment parameters
 ```
-$ > cp .env.dist -v .env
+$ > cp -v -b .env.dist .env
 ```
 Or just run ...
 ```
-$ > ./install.sh # It will copy the .env [if needed] and die with the following message
+$ > ./install.sh [--usring-machine my-docker-machine] [--provision] # It will copy the .env [if needed] and die with the following message
 
 Please set your environment values in '.env' file 
 and try again. Thank you.
@@ -66,13 +66,14 @@ PIM_BEHAT_DB_PASSWORD=
 
 3. Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
 ```
-$ > ./install.sh
+$ > ./install.sh [--usring-machine my-docker-machine] --provision 
 
 ```
 4. Subsequent runs cab be done just by running:
 ```
 $ > ./start.sh
 
+# This is just a wrapper for docker-compose down. Nothing fancy for now. :)
 $ > ./stop.sh # To stop all services
 ```
 
@@ -168,10 +169,6 @@ docker exec akeneo_pim_app bin/behat
 Sit back and enjoy.
 
 *If you wish to see what your tests are doing, you may connect via VNC to `akeneo.pim:5901`. The password is `secret`*
-
-#### Setting environment variable
-***PIM_PROVISION=1*** is only necessasry for the first run. For subsequent run, this could be removed.
-
 
 ### Known Issues
 1. In case you get an exception:

@@ -4,6 +4,7 @@ EXEC_NAME="${$0#./}"
 
 # Check if we are using Docker machine
 MACHINE_NAME=
+PROVISION="no"
 while test $# -gt 0; do
 	case "$1" in
 	-h|--help)
@@ -11,7 +12,7 @@ while test $# -gt 0; do
 		echo -e "\033[1;34m"
         echo "${EXEC_NAME} - Akeneo PIM Service installer"
         echo " "
-        echo "${EXEC_NAME} [-m,--using-machine=my-machine-name]"
+        echo "${EXEC_NAME} [-m,--using-machine=my-machine-name] [-p,--provision]"
         echo " "
         echo "options:"
         echo "-m, --using-machine       docker machine name"
@@ -22,6 +23,10 @@ while test $# -gt 0; do
         ;;
 	-m|--using-machine)
 		MACHINE_NAME="$2"
+		shift
+		;;
+	-p|--provision)
+		PROVISION="yes"
 		shift
 		;;
 	*)
@@ -156,7 +161,7 @@ function provision_app()
 	$DOCKER_EXEC app/console cache:warmup --env="${RUNNING_ENV}"
 	
 	# Only provision env if requested
-	if [ ! -z "${PIM_PROVISION}" ]; then # \\$PIM_PROVISION is from .env files
+	if [ "x${PROVISION}" == "xyes" ]; then # \\$PIM_PROVISION is from .env files
 		$DOCKER_EXEC app/console pim:install --env="${RUNNING_ENV}" --force
 	else
 		$DOCKER_EXEC app/console pim:install --env="${RUNNING_ENV}"
