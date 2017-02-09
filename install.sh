@@ -1,6 +1,5 @@
 #!/bin/bash
 
-EXEC_NAME="${$0#./}"
 
 # Check if we are using Docker machine
 MACHINE_NAME=
@@ -8,17 +7,7 @@ PROVISION="no"
 while test $# -gt 0; do
 	case "$1" in
 	-h|--help)
-		echo " "
-		echo -e "\033[1;34m"
-        echo "${EXEC_NAME} - Akeneo PIM Service installer"
-        echo " "
-        echo "${EXEC_NAME} [-m,--using-machine=my-machine-name] [-p,--provision]"
-        echo " "
-        echo "options:"
-        echo "-m, --using-machine       docker machine name"
-        echo " "
-        echo " example ${EXEC_NAME} -m new-machine --provision"
-        echo -e "\033[0m"
+        print_usage
         exit 0
         ;;
 	-m|--using-machine)
@@ -37,6 +26,27 @@ while test $# -gt 0; do
 	shift
 done
 
+
+function print_usage()
+{
+    
+	echo " "
+	echo -e "\033[1;34m"
+    echo " Akeneo PIM Service installer"
+    echo " "
+    echo "$0 [-m,--using-machine=my-machine-name] [-p,--provision]"
+    echo " "
+    echo "options:"
+    echo "-m, --using-machine       docker machine name"
+    echo " "
+    echo " examples:"
+    echo ""
+    echo "   $0   -m new-machine --provision"
+    echo "   $0   --using-machine new-machine -p"
+    echo "   $0   --provision"
+    echo -e "\033[0m"
+}
+
 # Copy the configuration file
 COPY='cp -v '
 S_PLATFORM=`uname`
@@ -50,7 +60,7 @@ fi
 $COPY -b .env.dist .env
 # Store the machine name
 if [ -n "${MACHINE_NAME}" ]; then
-	sed -i -E "s|MACHINE_NAME=(.*)|MACHINE_NAME=${MACHINE_NAME}" .env
+	sed -i -E "s|MACHINE_NAME=(.*)|MACHINE_NAME=${MACHINE_NAME}|" .env
 fi
 
 # Linux is compatible with Boot2Docker, so let's mount correctly
@@ -65,6 +75,7 @@ if [ -z "${PIM_DB_NAME}" ] || [ -z "${PIM_DB_USER}" ]; then
 	echo "Please set your environment values in '.env' file "
 	echo "and try again. Thank you."
 	echo ""
+    print_usage
 	exit 1
 fi
 
@@ -183,14 +194,21 @@ EOF
 	print_msg "===== Creating DB user ..."
 
 	docker exec akeneo_pim_mysql \
-		mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "${QUERIES}"
+		mysql -uroot -p"${MYSQL_ROOT_PASSWORD}" -e "${QUERIES}" # This is run on the mysql server so no port required
 	print_msg "Done"
 }
 
 # Bring up the infrastructure
 print_msg "====== Bringing empty service ..."
-	docker-compose up -d || exit 22
-	if [ -z "${MACHINE_NAME}" ]; then
+    
+    # Ensure Linux paths are mounted properly
+	if [ -n "${MACHINE_NAME}" ]; then
+        ./linux_machine.sh "${MACHINE_NAME}"
+    fi
+
+	docker-compose up -d --force-recreate || exit 22
+	
+    if [ -z "${MACHINE_NAME}" ]; then
 	    WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
 	else
 	    WEB_APP_IP=$(docker-machine ip "${MACHINE_NAME}")
