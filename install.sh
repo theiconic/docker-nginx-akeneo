@@ -191,7 +191,7 @@ EOF
 # Bring up the infrastructure
 print_msg "====== Bringing empty service ..."
 	docker-compose up -d || exit 22
-	if [ -n "${MACHINE_NAME}" ]; then
+	if [ -z "${MACHINE_NAME}" ]; then
 	    WEB_APP_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' akeneo_pim_app)
 	else
 	    WEB_APP_IP=$(docker-machine ip "${MACHINE_NAME}")
