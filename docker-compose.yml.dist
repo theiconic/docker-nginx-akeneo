@@ -11,7 +11,7 @@ services:
         command: "--max_allowed_packet=1000M --connect_timeout=72"
         volumes:
             - "mysql_data:/var/lib/mysql"
-            - "./conf/mysql/:/etc/mysql/conf.d"
+            - "./conf/mysql/:/etc/mysql/conf.d:ro"
         ports:
             - "${MYSQL_PORT}:3306"
         networks:
