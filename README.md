@@ -79,7 +79,7 @@ PIM_BEHAT_DB_PASSWORD=
 $ > ./install.sh [--usring-machine my-docker-machine] --provision 
 
 ```
-- Subsequent runs cab be done just by running:
+- **Subsequent runs cab be done just by running**:
 ```
 $ > ./start.sh
 
