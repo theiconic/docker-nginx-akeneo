@@ -1,64 +1,71 @@
 
-FROM richarvey/nginx-php-fpm:php7
-# Maintainer
-MAINTAINER Yinka Asonibare <yinka.asonibare@theiconic.com.au>
+FROM php:7.1-fpm-alpine
 
-RUN  sed -i -e 's/dl-cdn/dl-4/' /etc/apk/repositories && \
+
+LABEL "Maintainer"="THE ICONIC ENGINEERING TEAM <engineering@theiconic.com.au>"
+
+RUN  \
 	apk --update --no-cache add \
 	autoconf \
 	automake \
 	build-base \
-	py-pexpect \
-	gosu@testing \
-	php7-dev \
-	php7-posix \
-	php7-xml \
-	php7-xmlreader \
-	php7-zip
+	bash \
+	git \
+	freetype-dev \
+	icu-dev \
+	libjpeg-turbo-dev \
+	libmcrypt-dev \
+	libpng-dev \
+	libxml2-dev \
+	jpeg-dev \
+	openssl-dev \
+	python \
+	zlib-dev
 
-RUN cd /usr/bin && \
-	ln -svf php-config7 php-config && \
-	ln -svf phpize7 phpize
+RUN apk update && \
+  	apk add ca-certificates wget && \
+  	update-ca-certificates 
+
+ADD "./conf/php/php.ini" /usr/local/etc/php/
+
+# Install gd extension
+RUN docker-php-ext-configure gd \
+	--with-gd \
+	--with-freetype-dir=/usr/include/ \
+	--with-png-dir=/usr/include/ \
+	--with-jpeg-dir=/usr/include/ && \
+  NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
+  docker-php-ext-install -j${NPROC} gd
+
+# Install additional extensions
+RUN docker-php-ext-install \
+	exif \
+	intl \
+	mcrypt \
+	pdo_mysql \
+	posix \
+	soap \
+	zip \
+	> /dev/null
 
 
-# Install MongoDb
-RUN  CWDir=$(pwd) && cd /tmp/ && \
-	git clone https://github.com/mongodb/mongo-php-driver.git && \
-	cd mongo-php-driver && \
-	git submodule sync && git submodule update --init && \
-	phpize && \
-	./configure && \
-	make -s all -j 5 && \
-	make install && cd ${CWDir} && rm -rf /tmp/mongo-php-driver
+# Install MongoDb and APCu through PECL
+RUN for ext in apcu mongodb-beta; do printf "\n" | pecl install $ext > /dev/null ; done
 
-# Install APCu
-RUN CWDir=$(pwd) && cd /tmp/ && \
-    git clone https://github.com/krakjoe/apcu && \
-  	cd apcu && \
-  	phpize && \
-  	./configure --with-php-config=`which php-config7 | head -1` && \
-  	make -s -j 5 && \
-  	export TEST_PHP_ARGS='-n' && \
-  	make install && cd ${CWDir} && rm -rf /tmp/apcu
+# Enable other compiled extensions
+RUN docker-php-ext-enable apcu mongodb
 
-RUN php_ini_path=$(realpath $(php7 --ini | grep -e ".*\.ini files in" | cut -d':' -f2)) && \
-	printf  "extension=apcu.so\n \
- 		apc.enabled=1\n \
+# Set APC parameters
+RUN php_ini_path=$(realpath $(php --ini | grep -e ".*\.ini files in" | cut -d':' -f2)) && \
+	printf  "apc.enabled=1\n \
  		apc.shm_size=32M\n \
  		apc.ttl=7200\n \
- 		apc.enable_cli=1" \
-    	>> "${php_ini_path}/20-acpu.ini";
+ 		apc.enable_cli=1\n" \
+		>> "$(ls ${php_ini_path}/*apcu.ini)";
 
-
-# Enable the extensions
-RUN php_ini_path=$(realpath $(php7 --ini | grep -e ".*\.ini files in" | cut -d':' -f2)) && \
-    for ext in mongodb ; \
-    	do printf  "extension=${ext}.so\n" \
-    	>> "${php_ini_path}/20-${ext}.ini"; \
-    done
-
-ADD build/scripts/start.sh /start.sh
-ADD build/scripts/build.sh /build.sh
-
-# Ensure it's executable
-RUN chmod gu+x /start.sh
+# Install composer
+RUN wget \
+	https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer \
+	-O - -q | php -- --quiet && \
+	chmod +x composer.phar && \
+	mv composer.phar /usr/local/bin/composer
