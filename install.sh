@@ -4,19 +4,23 @@
 # Check if we are using Docker machine
 MACHINE_NAME=
 PROVISION="no"
+COMPOSER_TOKEN=
 while test $# -gt 0; do
 	case "$1" in
 	-h|--help)
         print_usage
         exit 0
         ;;
+	-t|--token)
+		COMPOSER_TOKEN="$2"
+		shift
+		;;
 	-m|--using-machine)
 		MACHINE_NAME="$2"
 		shift
 		;;
 	-p|--provision)
 		PROVISION="yes"
-		shift
 		;;
 	*)
 		break
@@ -26,7 +30,6 @@ while test $# -gt 0; do
 	shift
 done
 
-
 function print_usage()
 {
     
@@ -34,16 +37,20 @@ function print_usage()
 	echo -e "\033[1;34m"
     echo " Akeneo PIM Service installer"
     echo " "
-    echo "$0 [-m,--using-machine=my-machine-name] [-p,--provision]"
+    echo "$0 [-m,--using-machine my-machine-name] [-p,--provision] [-t,--token <composer-token>]"
     echo " "
     echo "options:"
     echo "-m, --using-machine       docker machine name"
+    echo "-p, --provision           true to force DB setup."
+    echo "-t, --token               composer token"
     echo " "
     echo " examples:"
     echo ""
     echo "   $0   -m new-machine --provision"
     echo "   $0   --using-machine new-machine -p"
+    echo "   $0   --using-machine new-machine -p -t 123abcd4nice1token"
     echo "   $0   --provision"
+    echo "   $0   --provision --token 123abcd4nice1token"
     echo -e "\033[0m"
 }
 
@@ -96,6 +103,11 @@ function composer_install()
 
 	
 	printf "\n    About to install vendors. Sit tight ...\n"
+
+    if [ -n "${COMPOSER_TOKEN}" ]; then
+        echo "Setting composer token globally"
+        $DOCKER_EXEC composer config -g github-oauth.github.com "${COMPOSER_TOKEN}"
+    fi
 
 	# Check that we can install doctrine/mongodb-odm-bundle
 	if [ $($DOCKER_EXEC composer show  | grep "mongo\-php\-adapter" > /dev/null 2>&1; echo $? ) -ne 0 ]; then
