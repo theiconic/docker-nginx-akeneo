@@ -16,6 +16,7 @@ RUN  \
 	libjpeg-turbo-dev \
 	libmcrypt-dev \
 	libpng-dev \
+	libxml2-dev \
 	jpeg-dev \
 	openssl-dev \
 	python \
@@ -29,10 +30,10 @@ ADD "./conf/php/php.ini" /usr/local/etc/php/
 
 # Install gd extension
 RUN docker-php-ext-configure gd \
-    --with-gd \
-    --with-freetype-dir=/usr/include/ \
-    --with-png-dir=/usr/include/ \
-    --with-jpeg-dir=/usr/include/ && \
+	--with-gd \
+	--with-freetype-dir=/usr/include/ \
+	--with-png-dir=/usr/include/ \
+	--with-jpeg-dir=/usr/include/ && \
   NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
   docker-php-ext-install -j${NPROC} gd
 
@@ -43,6 +44,7 @@ RUN docker-php-ext-install \
 	mcrypt \
 	pdo_mysql \
 	posix \
+	soap \
 	zip \
 	> /dev/null
 
@@ -59,7 +61,7 @@ RUN php_ini_path=$(realpath $(php --ini | grep -e ".*\.ini files in" | cut -d':'
  		apc.shm_size=32M\n \
  		apc.ttl=7200\n \
  		apc.enable_cli=1\n" \
-    	>> "$(ls ${php_ini_path}/*apcu.ini)";
+		>> "$(ls ${php_ini_path}/*apcu.ini)";
 
 # Install composer
 RUN wget \

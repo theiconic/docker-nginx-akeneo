@@ -236,11 +236,10 @@ print_msg "====== Provisioning Application server"
 	provision_database
 	provision_app
 	if [ -n "${MACHINE_NAME}" ]; then
-	    print_msg "Defining docker machine's local host address ..."
-	    	ETC_HOSTS=$(cat <<-EOF
-	echo "127.0.0.1 akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat akeneo.behat.local" | sudo tee -a /etc/hosts
+	    ETC_HOSTS=$(cat <<-EOF
+	echo "127.0.0.1 akeneo.pim akeneo.pim.local akeneo.db akeneo.db.local akeneo.behat akeneo.behat.local" 
 EOF
 )
-	    docker-machine ssh "${MACHINE_NAME} ${ETC_HOSTS}"
+	    print_msg "Consider adding the following to the /etc/hosts in docker-machine manually:\n ${ETC_HOSTS}"
 	fi
 print_msg "Done"
