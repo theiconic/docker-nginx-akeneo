@@ -26,11 +26,11 @@ services:
         image: pim/php-fpm-apline
         container_name: "akeneo_pim_app"
         environment:
-            - "COMPOSER_CACHE_DIR=/cache"
+            - "COMPOSER_HOME=/composer"
             - "WEBROOT=${WEBROOT}"
         volumes:
             - "${SOURCE_PATH}:${WEBROOT}"
-            - "${COMPOSER_CACHE_PATH}:/cache"
+            - "${COMPOSER_HOME}:/composer"
         working_dir: "${WEBROOT}"
         user: "$USER_ID"
         networks:
