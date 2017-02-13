@@ -19,6 +19,10 @@ fi
 ## Bring up the infrastructure
 ## ---------------------------------------
 print_msg "====== Staring Akeneo Service ..."
+    if [ -z "${MACHINE_NAME}" ]; then
+        # Ensure we are using the right docker connections
+        eval $(docker-machine env "${MACHINE_NAME}")
+    fi
     docker-compose up -d || exit 22
     echo "${MACHINE_NAME}"
     if [ -z "${MACHINE_NAME}" ]; then
