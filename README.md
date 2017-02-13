@@ -86,7 +86,8 @@ PIM_BEHAT_DB_PASSWORD=
 
 ```
 
-- Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
+### Installation - automated, trust me.
+- Install the project. This could take up to half an hour depending on your connection, your mileage may vary. **TODO.** improve this. Possibly due to slow composer install
 ```
 $ > ./install.sh [--usring-machine my-docker-machine] --provision 
 
