@@ -15,63 +15,75 @@ git clone https://github.com/akeneo/pim-community-standard.git preferred-directo
 
 ## # Running Service Clusters
 It's easy as:
-- Clone this repository
+- Cloning this repository
 ```BASH
 git clone https://github.com/theiconic/docker-nginx-akeneo.git
 cd docker-nginx-akeneo
 ```
-- **Setup your docker-compose** as desired
-```
+- **Setup your docker-compose** as desired. You may enable Behat service if needed
+```BASH
 $ > cp -v -b docker-compose.yml.dist docker-compose.yml
 $ > vim docker-compose.yml # or anything to edit
 ```
 
-- *If you need to create docker machine, please refer to [the creating docker-machine guide](https://docs.docker.com/machine/get-started/#/create-a-machine)* for your platform.
+- *If you need to create docker machine, please refer to [the creating docker-machine guide](https://docs.docker.com/machine/get-started/#/create-a-machine)* for your platform. Don't forget to create a machine if you are not using the native docker. You can create a new machine just by running the following:
+```BASH
+docker-machine create -d virtualbox --virtualbox-memory 2048 akeneo
+```
 
 - Set your environment parameters
-```
+```BASH
 $ > cp -v -b .env.dist .env
 ```
 Or just run ...
-```
-$ > ./install.sh [--usring-machine my-docker-machine] [--provision] # It will copy the .env [if needed] and die with the following message
+```BASH
+$ > ./install.sh [--usring-machine my-docker-machine] [--provision] 
+# This will copy the .env [if needed] and die with the following message :
 
-Please set your environment values in '.env' file 
-and try again. Thank you.
+  Please set your environment values in '.env' file 
+  and try again. Thank you.
 
 ```
-Edit your .env file as required
+Edit your `.env` file as required
 ```
 # Update the .env with your custom environment variables
 $ > vim .env # Or whatever
 ```
 **Sample .env file**
-```
+```BASH
 # .env
 WEBROOT=/var/www/pim/
-PIM_PROVISION=
-MYSQL_ROOT_PASSWORD=043h
-SOURCE_PATH=/home/waldorf/Workspace/Projects/pim/
-# Your docker machine name if using one
-MACHINE_NAME=my-machine
-# You can get this from running "id -u"
-COMPOSER_CACHE_PATH=.composer/cache
-USER_ID=1000:1500
+SOURCE_PATH=/home/ilorin/Workspace/pim-community-standard
 
+MYSQL_PORT=3309
+MYSQL_ROOT_PASSWORD=043h
+
+# Your docker machine name if using one
+MACHINE_NAME=akeneo
+
+# You can get this from running "id -u", "id -g". Please keep this as 1000 if not running on Linux env ;)
+USER_ID=1000
+
+# Composer cache
+COMPOSER_HOME=.composer/
+
+#-------------
 # PIM configs
 RUNNING_ENV=dev
+
 PIM_DB_HOST=mysql
 PIM_DB_PORT=3306
-PIM_DB_NAME=pim_db
-PIM_DB_USER=pim_user
+PIM_DB_NAME=akeneo_pim
+PIM_DB_USER=akeneo_pim
 PIM_DB_PASSWORD=
 
 # Behat stuff (Optional)
 PIM_BEHAT_DB_HOST=mysql
-PIM_BEHAT_DB_PORT=3306
-PIM_BEHAT_DB_NAME=
-PIM_BEHAT_DB_USER=
+PIM_BEHAT_DB_PORT=~
+PIM_BEHAT_DB_NAME=akeneo_behat
+PIM_BEHAT_DB_USER=akeneo_behat
 PIM_BEHAT_DB_PASSWORD=
+
 ```
 
 - Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
