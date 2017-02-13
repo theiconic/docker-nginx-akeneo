@@ -61,8 +61,8 @@ MYSQL_ROOT_PASSWORD=043h
 # Your docker machine name if using one
 MACHINE_NAME=akeneo
 
-# You can get this from running "id -u"
-USER_ID=1000:1000
+# You can get this from running "id -u", "id -g". Please keep this as 1000 if not running on Linux env ;)
+USER_ID=1000
 
 # Composer cache
 COMPOSER_HOME=.composer/
