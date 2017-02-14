@@ -20,13 +20,12 @@ RUN  \
 	jpeg-dev \
 	openssl-dev \
 	python \
+	re2c \
 	zlib-dev
 
 RUN apk update && \
   	apk add ca-certificates wget && \
-  	update-ca-certificates 
-
-ADD "./conf/php/php.ini" /usr/local/etc/php/
+  	update-ca-certificates
 
 # Install gd extension
 RUN docker-php-ext-configure gd \
@@ -45,12 +44,24 @@ RUN docker-php-ext-install \
 	pdo_mysql \
 	posix \
 	soap \
-	zip \
-	> /dev/null
+	zip
+
+# Compile XDebug extension and make ready for usage if desired
+RUN CWDir=$(pwd) && \
+    cd /tmp/ && \
+    git clone git://github.com/xdebug/xdebug.git && \
+    cd xdebug && \
+    phpize && \
+    ./configure --enable-xdebug && \
+    make && \
+    cp ./modules/xdebug.so $(php-config --extension-dir)/xdebug.so && \
+    cd ${CWDir} && rm -rf /tmp/xdebug
+    # Note that this extension will not work without being enabled!!
+    # Enabling will be left optional
 
 
 # Install MongoDb and APCu through PECL
-RUN for ext in apcu mongodb-beta; do printf "\n" | pecl install $ext > /dev/null ; done
+RUN for ext in apcu mongodb-beta; do printf "\n" | pecl install $ext; done
 
 # Enable other compiled extensions
 RUN docker-php-ext-enable apcu mongodb
