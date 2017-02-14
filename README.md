@@ -225,7 +225,7 @@ docker exec akeneo_pim_app rm -rf /var/www/pim/app/cache/*
 ### # Using XDebug (Dev Optional)
 This Docker service comes with a pre-compiled xDebug, which is not enabled by default.
 To enable this extension, edit `conf/php/xdebug.ini` and modify as desired. Restart your service and xDebug should be available. But remember to **avoid using xDebug** for production environments.
-There is also a handy xdebug proxy server in the `docker-composoe`; you may uncomment this and use as desired.
+There is also a handy xdebug proxy server in the `docker-compose`; you may uncomment this and use as desired.
 ## # Some other useful resources
 To further understand the rationale behind mounting the App (PHP-FPM) instance differently please refer to comments from:
 - http://stackoverflow.com/a/36908278
