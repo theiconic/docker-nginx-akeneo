@@ -86,11 +86,20 @@ PIM_BEHAT_DB_PASSWORD=
 
 ```
 
-- Install the project. This could take up to half an hour depending on your connection. **TODO.** improve this. Possibly due to slow composer install
+### Installation - automated, trust me.
+- Install the project. This could take up to half an hour depending on your connection, your mileage may vary. **TODO.** improve this. Possibly due to slow composer install
 ```
-$ > ./install.sh [--usring-machine my-docker-machine] --provision 
+$ > ./install.sh [--using-machine my-docker-machine] --provision --token 123abcd4nice1token
 
 ```
+**Remeber to specify the necessary parameters for the `install.sh` script.**
+***--using-machine*** If running docker inside a docker machine, specify your machine name, eg. `-m akeneo` or `--using-machine akeneo`
+
+***--provision*** Generally you will always provide this parameter. equivalent is `-p`. It's set as a parameter to avoid accidentally overrwriting your DB, but Akeneo also does this check internally when installing :)
+
+***--token*** It's recommended to specify your github oauth token to avoid hitting the GitHub API clone restrictions when pulling the Akeneo's vendor packages from github && packagist.org
+
+
 - **Subsequent runs cab be done just by running**:
 ```
 $ > ./start.sh
@@ -107,6 +116,7 @@ eg.
     
     Or 127.0.0.1 if not using docker machine
 ```
+You could also edit the `/etc/hosts` on your docker machine too if have need for such :)
 
 ## # Behat Setup
 Akeneo comes bundled with great BDD that runs off Behat amongst others, to harness hacking, you could enable the Behat service.
