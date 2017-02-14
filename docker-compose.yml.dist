@@ -73,7 +73,7 @@ services:
     # Uncomment this lines if you want Xdebug (Dev)
     # X-DEBUG Proxy for remote debugging php-fpm
 #    dbgpproxy:
-#        image: christianbladescb/dbgpproxy
+#        image: theiconic/dbgp-proxy-lite
 #        restart: always
 #        container_name: "akeneo_pim_xdebug"
 #        ports:
