@@ -23,8 +23,7 @@ RUN  \
 	re2c \
 	zlib-dev
 
-RUN apk update && \
-  	apk add ca-certificates wget && \
+RUN apk --update --no-cache add ca-certificates wget && \
   	update-ca-certificates
 
 # Install gd extension
