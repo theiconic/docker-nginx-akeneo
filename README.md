@@ -92,7 +92,7 @@ PIM_BEHAT_DB_PASSWORD=
 $ > ./install.sh [--using-machine my-docker-machine] --provision --token 123abcd4nice1token
 
 ```
-Remeber to specify the necessary parameters for the `install.sh` script.
+**Remeber to specify the necessary parameters for the `install.sh` script.**
 ***--using-machine*** if running docker inside a docker machine
 ***--provision*** Generally you will always provide this parameter. equivalent is `-p`. It's set as a parameter to avoid accidentally overrwriting your DB, but Akeneo also does this check internally when installing :)
 ***--token*** it's recommended to specify your github oauth token to avoid hitting the GitHub API clone restrictions when pulling the Akeneo's vendor packages from github && packagist.org
