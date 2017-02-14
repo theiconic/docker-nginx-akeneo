@@ -86,7 +86,7 @@ PIM_BEHAT_DB_PASSWORD=
 
 ```
 
-### Installation - automated, trust me.
+### # Installation - automated, trust me.
 - Install the project. This could take up to half an hour depending on your connection, your mileage may vary. **TODO.** improve this. Possibly due to slow composer install
 ```
 $ > ./install.sh [--using-machine my-docker-machine] --provision --token 123abcd4nice1token
@@ -193,7 +193,7 @@ default:
 ```
 docker exec akeneo_pim_app app/console pim:install --env=behat --force
 ```
-### Running the Behat
+### # Running the Behat
 Just run:
 ```
 docker exec akeneo_pim_app bin/behat
@@ -202,7 +202,7 @@ Sit back and enjoy.
 
 *If you wish to see what your tests are doing, you may connect via VNC to `akeneo.pim:5901`. The password is `secret`*
 
-### Known Issues
+### # Known Issues
 1. In case you get an exception:
 ```BASH
 request.CRITICAL: Uncaught PHP Exception Twig_Error_Runtime: "An exception has been thrown during the rendering of a template ("Error during translations file generation for locale "en_US"")." at /var/www/pim/src/Oro/Bundle/TranslationBundle/Resources/views/requirejs.config.js.twig line 4 {"exception":"[object] (Twig_Error_Runtime(code: 0): An exception has been thrown during the rendering of a template (\"Error during translations file generation for locale \"en_US\"\"). at /var/www/pim/src/Oro/Bundle/TranslationBundle/Resources/views/requirejs.config.js.twig:4, RuntimeException(code: 0): Error during translations file generation for locale \"en_US\" at /var/www/pim/src/Pim/Bundle/EnrichBundle/Twig/TranslationsExtension.php:70)"} []
@@ -222,7 +222,10 @@ you could
 ```
 docker exec akeneo_pim_app rm -rf /var/www/pim/app/cache/*
 ```
-
+### # Using XDebug (Dev Optional)
+This Docker service comes with a pre-compiled xDebug, which is not enabled by default.
+To enable this extension, edit `conf/php/xdebug.ini` and modify as desired. Restart your service and xDebug should be available. But remember to **avoid using xDebug** for production environments.
+There is also a handy xdebug proxy server in the `docker-composoe`; you may uncomment this and use as desired.
 ## # Some other useful resources
 To further understand the rationale behind mounting the App (PHP-FPM) instance differently please refer to comments from:
 - http://stackoverflow.com/a/36908278

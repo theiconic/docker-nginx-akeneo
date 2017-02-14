@@ -30,6 +30,9 @@ services:
         volumes:
             - "${SOURCE_PATH}:${WEBROOT}"
             - "${COMPOSER_HOME}:/composer"
+            - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
+            # Edit file and uncomment derivatives to enable xdebug extension
+            - "./conf/php/xdebug.ini:/usr/local/etc/php/conf.d/20-custom-xdebug.ini:ro"
         working_dir: "${WEBROOT}"
         user: "$USER_ID"
         networks:
@@ -45,6 +48,7 @@ services:
         ports:
             - 80:80
             - 443:443
+            - 8081:8081 # Behat dedicated port
         depends_on:
             - akeneo
             - mysql
@@ -53,7 +57,8 @@ services:
         networks:
             - akeneo_network
 
-# Uncomment to use Selenium / Behat setup
+    # ********************************
+    # Uncomment to use Selenium / Behat setup
 #    selenium:
 #         image: selenium/standalone-firefox-debug:2.53.1
 #         ports:
@@ -65,14 +70,14 @@ services:
 #         networks:
 #            - akeneo_network
 
-# Uncomment this lines if you want Xdebug (Dev)
-#   # X-DEBUG Proxy for remote debugging php-fpm
+    # Uncomment this lines if you want Xdebug (Dev)
+    # X-DEBUG Proxy for remote debugging php-fpm
 #    dbgpproxy:
 #        image: christianbladescb/dbgpproxy
 #        restart: always
 #        container_name: "akeneo_pim_xdebug"
 #        ports:
-#            - "9001:9000"
+#            - "9002:9001"
 #        networks:
 #            - akeneo_network
 
