@@ -22,8 +22,7 @@ services:
 
     # Akeneo Pim
     akeneo:
-        build: .
-        image: pim/php-fpm-apline
+        image: theiconic/akeneo-nginx
         container_name: "akeneo_pim_app"
         environment:
             - "COMPOSER_HOME=/composer"
