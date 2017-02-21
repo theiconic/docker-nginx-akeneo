@@ -40,6 +40,7 @@ RUN docker-php-ext-install \
 	exif \
 	intl \
 	mcrypt \
+	mysqli \
 	pdo_mysql \
 	posix \
 	soap \
