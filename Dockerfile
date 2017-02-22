@@ -1,5 +1,5 @@
 
-FROM php:7.1.1-fpm-alpine
+FROM php:7.1-fpm-alpine
 
 
 LABEL "Maintainer"="THE ICONIC ENGINEERING TEAM <engineering@theiconic.com.au>"
