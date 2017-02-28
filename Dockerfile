@@ -21,6 +21,7 @@ RUN  \
 	openssl-dev \
 	python \
 	re2c \
+	tzdata \
 	zlib-dev
 
 RUN apk --update --no-cache add ca-certificates wget && \

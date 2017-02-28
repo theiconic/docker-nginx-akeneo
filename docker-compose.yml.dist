@@ -27,6 +27,7 @@ services:
         environment:
             - "COMPOSER_HOME=/composer"
             - "WEBROOT=${WEBROOT}"
+            - "TZ=${TIME_ZONE}"
         volumes:
             - "${SOURCE_PATH}:${WEBROOT}"
             - "${COMPOSER_HOME}:/composer"

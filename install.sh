@@ -5,30 +5,6 @@
 MACHINE_NAME=
 PROVISION="no"
 COMPOSER_TOKEN=
-while test $# -gt 0; do
-	case "$1" in
-	-h|--help)
-        print_usage
-        exit 0
-        ;;
-	-t|--token)
-		COMPOSER_TOKEN="$2"
-		shift
-		;;
-	-m|--using-machine)
-		MACHINE_NAME="$2"
-		shift
-		;;
-	-p|--provision)
-		PROVISION="yes"
-		;;
-	*)
-		break
-		;;
-	esac
-	# Move to next parameter
-	shift
-done
 
 function print_usage()
 {
@@ -53,6 +29,31 @@ function print_usage()
     echo "   $0   --provision --token 123abcd4nice1token"
     echo -e "\033[0m"
 }
+
+while test $# -gt 0; do
+	case "$1" in
+	-h|--help)
+        print_usage
+        exit 0
+        ;;
+	-t|--token)
+		COMPOSER_TOKEN="$2"
+		shift
+		;;
+	-m|--using-machine)
+		MACHINE_NAME="$2"
+		shift
+		;;
+	-p|--provision)
+		PROVISION="yes"
+		;;
+	*)
+		break
+		;;
+	esac
+	# Move to next parameter
+	shift
+done
 
 # Copy the configuration file
 COPY='cp -v '
