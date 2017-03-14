@@ -32,7 +32,7 @@ if [ "$(uname)" == "Linux" ]; then
         sudo mount -o ${BINDING}bind,uid=$(id -u),gid=$(id -g) \
             "/hosthome/\${d}" "/home/\${d}"
         done
- EOF
+EOF
 )
     docker-machine ssh "$1" "${COMMANDS}"
 fi

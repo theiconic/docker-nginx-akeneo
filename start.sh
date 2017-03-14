@@ -12,7 +12,7 @@ function print_msg()
 # This is a hack around mounting Linux volumes on docker-machines properly
 # @see https://github.com/docker/machine/issues/3234#issuecomment-202596213
 if [ -n "${MACHINE_NAME}" ] && [ "`uname`" == 'Linux' ]; then
-    ./linux_machine.sh $MACHINE_NAME
+    ./prep_machine.sh $MACHINE_NAME
 fi
 
 ## ------------------------------------
