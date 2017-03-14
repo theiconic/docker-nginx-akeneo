@@ -33,7 +33,7 @@ docker-machine create -d virtualbox --virtualbox-memory 2048 akeneo
 
 - Set your environment parameters
 ```BASH
-$ > cp -v -b .env.dist .env
+$ > cp -v .env.dist .env
 ```
 Or just run ...
 ```BASH
