@@ -61,11 +61,11 @@ S_PLATFORM=`uname`
 IS_LINUX=
 
 if [ "${S_PLATFORM}" == 'Linux' ]; then
-	COPY="${COPY} --update " # Linux implementation support update flag
+	COPY="${COPY} --update --backup" # Linux implementation support these flag
 	IS_LINUX=1
 fi
 
-$COPY -b .env.dist .env
+$COPY .env.dist .env
 # Store the machine name
 if [ -n "${MACHINE_NAME}" ]; then
 	sed -i -E "s|MACHINE_NAME=(.*)|MACHINE_NAME=${MACHINE_NAME}|" .env
@@ -215,8 +215,8 @@ EOF
 print_msg "====== Bringing empty service ..."
     
     # Ensure Linux paths are mounted properly
-	if [ -n "${MACHINE_NAME}" ]; then
-        ./linux_machine.sh "${MACHINE_NAME}"
+    if [ -n "${MACHINE_NAME}" ]; then
+        ./prep_machine.sh "${MACHINE_NAME}"
     fi
 
 	docker-compose up -d --force-recreate || exit 22

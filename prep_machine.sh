@@ -22,15 +22,19 @@ if [ $(docker-machine status "$1" | grep -i 'running' > /dev/null 2>&1 ; echo $?
     BINDING=
 fi
 
-echo "Mounting host home folder..."
-COMMANDS=$(cat <<-EOF
-    ls -1 /hosthome | while read d
-    do sudo mkdir -p "/home/\${d}" && \
-    sudo mount -o ${BINDING}bind,uid=$(id -u),gid=$(id -g) \
-        "/hosthome/\${d}" "/home/\${d}"
-    done
-EOF
+if [ "$(uname)" == "Linux" ]; then
+
+    echo "Mounting host home folder..."
+
+    COMMANDS=$(cat <<-EOF
+        ls -1 /hosthome | while read d
+        do sudo mkdir -p "/home/\${d}" && \
+        sudo mount -o ${BINDING}bind,uid=$(id -u),gid=$(id -g) \
+            "/hosthome/\${d}" "/home/\${d}"
+        done
+ EOF
 )
-docker-machine ssh "$1" "${COMMANDS}"
+    docker-machine ssh "$1" "${COMMANDS}"
+fi
 
 echo "Done"
