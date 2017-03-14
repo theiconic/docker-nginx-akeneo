@@ -1,5 +1,9 @@
 #!/bin/sh
 
+S_PLATFORM=`uname`
+if [ "${S_PLATFORM}" != 'Linux' ]; then
+    exit 0
+fi
 
 if [ -z "$1" ]; then
     echo "Please specify a docker-machine name."
