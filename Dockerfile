@@ -19,6 +19,7 @@ RUN  \
 	libxml2-dev \
 	jpeg-dev \
 	openssl-dev \
+	procps \
 	python \
 	re2c \
 	tzdata \
