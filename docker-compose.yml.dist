@@ -58,6 +58,14 @@ services:
         networks:
             - akeneo_network
 
+# Uncomment this lines if you need redis service
+#    # Redis
+#    redis:
+#        image: redis:3.0.7-alpine
+#        restart: always
+#        container_name: "akeneo_pim_redis"
+#        networks:
+#            - akeneo_network
     # ********************************
     # Uncomment to use Selenium / Behat setup
 #    selenium:
