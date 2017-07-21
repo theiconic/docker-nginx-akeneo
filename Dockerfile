@@ -28,6 +28,20 @@ RUN  \
 RUN apk --update --no-cache add ca-certificates wget && \
   	update-ca-certificates
 
+# php-redis
+ENV PHPREDIS_VERSION 3.1.1
+
+RUN PHP_INI_MODULES_PATH=$(realpath $(php --ini | grep -e ".*\.ini files in" | cut -d':' -f2)) \
+    && docker-php-source extract \
+    && curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz && cd /tmp/ \
+    && tar xf /tmp/redis.tar.gz \
+    && rm -r /tmp/redis.tar.gz && cd $(find /tmp/phpredis* -type d | head -1) \
+    && pwd && phpize \
+    && ./configure \
+    && make && make install \
+    && printf "extension=redis.so" > "${PHP_INI_MODULES_PATH}/phpredis-redis.ini" \
+    && docker-php-source delete
+
 # Install gd extension
 RUN docker-php-ext-configure gd \
 	--with-gd \
