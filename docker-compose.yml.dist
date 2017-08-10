@@ -14,10 +14,10 @@ services:
             - "./conf/mysql/:/etc/mysql/conf.d:ro"
         ports:
             - "${MYSQL_PORT}:3306"
-        networks:
-            akeneo_network:
-                aliases:
-                    - mysql.db
+#        networks:
+#            akeneo_network:
+#                aliases:
+#                    - mysql.db
 
 
     # Akeneo Pim
@@ -33,13 +33,13 @@ services:
             - "${COMPOSER_HOME}:/composer"
             - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
             # Edit file and uncomment derivatives to enable xdebug extension
-            - "./conf/php/xdebug.ini:/usr/local/etc/php/conf.d/20-custom-xdebug.ini:ro"
+#            - "./conf/php/xdebug.ini:/usr/local/etc/php/conf.d/20-custom-xdebug.ini:ro"
         working_dir: "${WEBROOT}"
         user: "$USER_ID"
-        networks:
-            akeneo_network:
-                aliases:
-                    - akeneo.pim
+#        networks:
+#            akeneo_network:
+#                aliases:
+#                    - akeneo.pim
 
     nginx:
         image: nginx:alpine
@@ -49,14 +49,14 @@ services:
         ports:
             - 80:80
             - 443:443
-            - 8081:8081 # Behat dedicated port
+#            - 8081:8081 # Behat dedicated port
         depends_on:
             - akeneo
             - mysql
         volumes_from:
             - akeneo:ro
-        networks:
-            - akeneo_network
+#        networks:
+#            - akeneo_network
 
 # Uncomment this lines if you need redis service
 #    # Redis
@@ -94,5 +94,5 @@ volumes:
     mysql_data:
         driver: local
 
-networks:
-    akeneo_network:
+#networks:
+#    akeneo_network:
