@@ -1,6 +1,19 @@
 version: '2'
 
 services:
+    mysql:
+        image: mysql:5.6
+        restart: always
+        container_name: "akeneo_pim_mysql"
+        environment:
+            - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+        command: "--max_allowed_packet=1000M --connect_timeout=72"
+        volumes:
+            - "mysql_data:/var/lib/mysql"
+            - "./conf/mysql/:/etc/mysql/conf.d:ro"
+        ports:
+            - "${MYSQL_PORT}:3306"
+
     akeneo:
         image: theiconic/akeneo-nginx
         container_name: "akeneo_pim_app"
@@ -24,8 +37,8 @@ services:
         ports:
             - 80:80
             - 443:443
-#            - 8081:8081 # Behat dedicated port
         depends_on:
             - akeneo
+            - mysql
         volumes_from:
             - akeneo:ro
