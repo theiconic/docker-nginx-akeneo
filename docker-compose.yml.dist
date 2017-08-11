@@ -13,6 +13,8 @@ services:
             - "./conf/mysql/:/etc/mysql/conf.d:ro"
         ports:
             - "${MYSQL_PORT}:3306"
+        networks:
+            akeneo_network
 
     akeneo:
         image: theiconic/akeneo-nginx
@@ -27,6 +29,8 @@ services:
             - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
         working_dir: "${WEBROOT}"
         user: "$USER_ID"
+        networks:
+            akeneo_network
 
     nginx:
         image: nginx:alpine
@@ -41,9 +45,13 @@ services:
             - mysql
         volumes_from:
             - akeneo:ro
-        links:
-            - akeneo
+        networks:
+            - akeneo_network
 
 volumes:
     mysql_data:
         driver: local
+
+networks:
+  akeneo_network:
+      driver: bridge
