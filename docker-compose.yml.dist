@@ -42,3 +42,7 @@ services:
             - mysql
         volumes_from:
             - akeneo:ro
+
+volumes:
+    mysql_data:
+        driver: local
