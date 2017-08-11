@@ -49,7 +49,7 @@ services:
         ports:
             - 80:80
             - 443:443
-#            - 8081:8081 # Behat dedicated port
+            - 8081:8081 # Behat dedicated port
         depends_on:
             - akeneo
             - mysql
