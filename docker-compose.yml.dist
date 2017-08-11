@@ -14,7 +14,9 @@ services:
         ports:
             - "${MYSQL_PORT}:3306"
         networks:
-            - akeneo_network
+            akeneo_network:
+                aliases:
+                    - mysql.db
 
     akeneo:
         image: theiconic/akeneo-nginx
@@ -30,7 +32,9 @@ services:
         working_dir: "${WEBROOT}"
         user: "$USER_ID"
         networks:
-            - akeneo_network
+            akeneo_network:
+                aliases:
+                    - akeneo.pim
 
     nginx:
         image: nginx:alpine
