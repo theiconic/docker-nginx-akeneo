@@ -30,14 +30,14 @@ services:
             - "${COMPOSER_HOME}:/composer"
             - "./conf/php/php.ini:/usr/local/etc/php/php.ini"
         working_dir: "${WEBROOT}"
-#        user: "$USER_ID"
+        user: "$USER_ID"
         networks:
             akeneo_network:
                 aliases:
                     - akeneo.pim
 
     nginx:
-        image: nginx:alpine
+        image: nginx:1.11.13-alpine
         container_name: "akeneo_pim_nginx"
         volumes:
             - "./conf/nginx/sites-available:/etc/nginx/conf.d/:ro"
@@ -59,3 +59,8 @@ volumes:
 networks:
   akeneo_network:
       driver: bridge
+      ipam:
+        driver: default
+        config:
+            -
+                subnet: 192.168.20.1/24
