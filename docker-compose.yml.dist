@@ -52,6 +52,16 @@ services:
         networks:
             - akeneo_network
 
+    postman:
+        image: postman/newman_alpine33:3.2.0
+        container_name: "akeneo_pim_postman"
+        volumes:
+            - "${POSTMAN_SOURCE_PATH}:/etc/newman:ro"
+        depends_on:
+            - nginx
+        networks:
+            - akeneo_network
+
 volumes:
     mysql_data:
         driver: local
