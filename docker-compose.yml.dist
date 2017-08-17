@@ -43,7 +43,6 @@ services:
             - "./conf/nginx/sites-available:/etc/nginx/conf.d/:ro"
         ports:
             - 8800:80
-            - 443:443
         depends_on:
             - akeneo
             - mysql
